@@ -1,10 +1,10 @@
-name: Python CI (FastAPI / Django)
+name: Python CI
 
 on:
   push:
-    branches: [production, development, staging]
+    branches: [main, development]
   pull_request:
-    branches: [production, development, staging]
+    branches: [main, development]
 
 jobs:
   test-and-lint:
@@ -12,42 +12,33 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ["3.10"]
+        python-version: ["3.10", "3.12"]
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install black isort pylint mypy pytest
-
-          if [ -f requirements.txt ]; then
-            pip install -r requirements.txt
-          fi
+          pip install -r requirements-dev.txt
 
       - name: Check formatting with Black
-        run: |
-          black --check .
+        run: black --check app/ tests/
 
       - name: Check imports with isort
-        run: |
-          isort . --check-only --profile black
+        run: isort --check-only --diff app/ tests/
 
       - name: Run Pylint
-        run: |
-          pylint $(git ls-files '*.py' | grep -v migrations | grep -v venv | grep -v __pycache__)
+        run: pylint app/ tests/
 
       - name: Run mypy type checking
-        run: |
-          mypy .
+        run: mypy app/ tests/
 
       - name: Run tests
-        run: |
-          pytest
+        run: pytest tests/ -v

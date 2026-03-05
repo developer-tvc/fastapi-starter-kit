@@ -1,0 +1,28 @@
+[project]
+name = "fastapi-starter-kit"
+version = "0.1.0"
+description = "A minimal FastAPI starter kit with health-check endpoint and quality tooling."
+requires-python = ">=3.10"
+
+# ---------------------------------------------------------------------------
+# Tool configuration
+# ---------------------------------------------------------------------------
+
+[tool.black]
+line-length = 88
+target-version = ["py310", "py312"]
+
+[tool.isort]
+profile = "black"
+known_first_party = ["app"]
+
+[tool.pylint.messages_control]
+disable = ["C0114", "C0115", "C0116"]  # missing docstring warnings (optional)
+
+[tool.mypy]
+python_version = "3.10"
+strict = false
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
