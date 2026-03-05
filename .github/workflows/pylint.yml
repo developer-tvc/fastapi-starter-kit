@@ -2,9 +2,9 @@ name: Python CI (FastAPI / Django)
 
 on:
   push:
-    branches: [production, development, staging]
+    branches: [main, development]
   pull_request:
-    branches: [production, development, staging]
+    branches: [main, development]
 
 jobs:
   test-and-lint:
