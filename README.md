@@ -1,82 +1,231 @@
-# FastAPI Starter Kit
+# FastAPI Skeleton
+A production-ready backend foundation built with FastAPI, implementing Clean Architecture, modular design, and Docker-based development environments.
 
-A minimal FastAPI boilerplate with a clean project structure, health-check endpoint, and quality tooling pre-configured.
+Technology Stack:
+-Python 3.12
+-FastApi
+-PostgreSQL
+-Docker
 
-## Project Structure
+## Overview
+    This repository provides a structured backend architecture with:
 
-```
-fastapi-starter-kit/
-├── app/
-│   ├── __init__.py
-│   └── main.py              # FastAPI application & health endpoint
-├── tests/
-│   ├── __init__.py
-│   ├── conftest.py           # Shared pytest fixtures
-│   └── test_main.py          # Test cases
-├── requirements.txt          # Production dependencies
-├── requirements-dev.txt      # Dev / testing dependencies
-├── .gitignore
-└── README.md
-```
+        -Clean Architecture principles
 
-## Getting Started
+        -Modular feature-based structure
 
-### Prerequisites
+        -Separation of domain, infrastructure, and API layers
 
-- Python 3.12+
+        -Production-ready Docker setup
 
-### Setup
+        -Database migrations
 
-```bash
-# Clone the repository
-git clone <repo-url> && cd fastapi-starter-kit
+        -Testable use cases
 
-# Create & activate a virtual environment
-python3 -m venv .venv
-source .venv/bin/activate
+        -Repository pattern implementation
 
-# Install all dependencies (production + dev)
-pip install -r requirements-dev.txt
-```
+    The goal is to provide a scalable and maintainable backend foundation that can be reused across multiple services.
 
-### Run the Server
+### Architecture
+    This project follows Clean Architecture principles.
 
-```bash
-uvicorn app.main:app --reload
-```
+    Layers are separated to ensure:
 
-- API: http://127.0.0.1:8000
-- Swagger Docs: http://127.0.0.1:8000/docs
-- ReDoc: http://127.0.0.1:8000/redoc
+        -Business logic is independent of frameworks
 
-## API Endpoints
+        -Infrastructure can be replaced without affecting domain logic
 
-| Method | Path | Description  |
-| ------ | ---- | ------------ |
-| `GET`  | `/`  | Health check |
+        -High testability
 
-## Quality Tooling
+        -Clear separation of concerns
 
-All tools are included in `requirements-dev.txt`:
+    Architecture layers:
 
-| Tool       | Purpose          | Command                              |
-| ---------- | ---------------- | ------------------------------------ |
-| **Black**  | Code formatting  | `black --check app/ tests/`          |
-| **isort**  | Import ordering  | `isort --check-only --diff app/ tests/` |
-| **Pylint** | Code quality     | `pylint app/ tests/`                 |
-| **mypy**   | Type checking    | `mypy app/ tests/`                   |
-| **pytest** | Unit tests       | `pytest tests/ -v`                   |
+        API Layer (FastAPI routes)
+                ↓
+        Application Layer (Use Cases)
+                ↓
+        Domain Layer (Entities + Repository Interfaces)
+                ↓
+        Infrastructure Layer (Database / ORM Implementation)
 
-### Run All Checks
+### Project Structure
 
-```bash
-black --check app/ tests/ && \
-isort --check-only --diff app/ tests/ && \
-pylint app/ tests/ && \
-mypy app/ tests/ && \
-pytest tests/ -v
-```
+    ├── alembic.ini
+    ├── app
+    │   ├── core
+    │   │   ├── config.py
+    │   │   ├── database.py
+    │   │   ├── dependencies.py
+    │   │   └── security.py
+    │   ├── db
+    │   │   └── base.py
+    │   ├── main.py                                           #FastAPI entry point
+    │   └── modules
+    │       └── users
+    │           ├── api
+    │           │   ├── routes.py
+    │           │   └── schemas.py                             
+    │           ├── domain                                     #Business Logic
+    │           │   ├── entities.py                   
+    │           │   └── repositories.py
+    │           ├── infrastructure
+    │           │   ├── models.py                              #Database models
+    │           │   └── sqlalchemy_repository.py               #Database operations
+    │           └── use_cases
+    │               ├── create_users.py
+    │               └── list_users.py
+    ├── docker-compose.local.yml
+    ├── docker-compose.yml
+    ├── Dockerfile
+    ├── migrations
+    │   ├── env.py
+    │   ├── README
+    │   ├── script.py.mako
+    │   └── versions
+    │       └── 90bd21ec797f_user.py
+    ├── poetry.lock
+    ├── pyproject.toml
+    ├── README.md
+    ├── requirements.txt
+    ├── start.sh
+    └── tests
+        └── users
+            ├── fake_repository.py
+            ├── test_create_user.py
+            └── test_list_users.py
 
-## License
 
-MIT
+### Layer Responsibilities
+
+-API Layer
+
+    Handles HTTP requests and responses.
+
+        -FastAPI routers
+
+        -Request validation
+
+        -Response serialization
+
+-Use Cases
+
+    Contains application business logic.
+
+    Examples:
+
+        -Create user
+
+        -List users
+
+        -Update user
+
+    Use cases depend only on domain interfaces, not infrastructure.
+
+
+-Domain Layer
+
+    Defines core business models.
+
+        -Entities
+
+        -Repository interfaces
+
+    This layer must not depend on any framework.
+
+
+-Infrastructure Layer
+
+    Implements external systems such as:
+
+        -SQLAlchemy models
+
+        -Repository implementations
+
+    Database operations
+
+###  Installation Guide
+
+    Explain how to run the project locally.
+
+        1.Clone the repository:
+        
+            git clone https://github.com/company-name/project-name.git
+            cd project-name
+        2.Create a virtual environment:
+        
+            python -m venv venv
+            source venv/bin/activate
+        3.Install dependencies:
+        
+            pip install -r requirements.txt
+        4.Run application:
+        
+            uvicorn app.main:app --reload
+
+    Application will be available at:
+
+        http://localhost:8000
+
+    Swagger documentation:
+
+        http://localhost:8000/docs
+
+    Running with Docker:
+    
+        docker-compose up --build
+
+    in local environment run:
+
+        docker-compose -f docker-compose.yml -f docker-compose.local.yml up --build
+
+### Environment Configuration
+    Configuration is managed in:
+
+        app/core/config.py
+
+    Environment variables should be defined using .env.
+    Copy .env.example to .env and fill in the values.
+    
+
+### Database Migrations
+    Migrations are managed using Alembic.
+    migrations are stored in the migrations directory.
+    
+        migrations/
+    
+    create new migration:
+    
+        alembic revision --autogenerate -m "message"
+    
+    apply migrations:
+    
+        alembic upgrade head
+    
+### Testing
+    Tests are stored in the tests directory.
+    
+        tests/
+    run tests:
+    
+        pytest
+    Test use FakeRepository to isolate business logic tests from database.
+
+    Example:
+    
+        pytest tests/users/FakeRepository.py
+
+
+### Why This Architecture?
+
+    Benefits:
+
+        Scalable for large applications
+
+        Clear code boundaries
+
+        High testability
+
+        Framework independence for business logic
+
+        Easy onboarding for teams
