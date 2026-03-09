@@ -54,42 +54,42 @@ Technology Stack:
     ├── alembic.ini
     ├── app
     │   ├── core
-    │   │   ├── config.py
-    │   │   ├── database.py
-    │   │   ├── dependencies.py
-    │   │   └── security.py
+    │   │   ├── config.py                                       # Application configuration
+    │   │   ├── database.py                                     # Database connection setup
+    │   │   ├── dependencies.py                                 # Shared FastAPI dependencies
+    │   │   └── security.py                                     # Authentication & security utilities
     │   ├── db
-    │   │   └── base.py
-    │   ├── main.py                                           #FastAPI entry point
+    │   │   └── base.py                                         # Base SQLAlchemy models import
+    │   ├── main.py                                             #FastAPI entry point
     │   └── modules
-    │       └── users
+    │       └── users                                           #user module
     │           ├── api
-    │           │   ├── routes.py
-    │           │   └── schemas.py                             
-    │           ├── domain                                     #Business Logic
+    │           │   ├── routes.py                               # User API endpoints
+    │           │   └── schemas.py                              # Pydantic request/response schemas
+    │           ├── domain                                      #Business Logic
     │           │   ├── entities.py                   
     │           │   └── repositories.py
     │           ├── infrastructure
-    │           │   ├── models.py                              #Database models
-    │           │   └── sqlalchemy_repository.py               #Database operations
+    │           │   ├── models.py                               #Database models
+    │           │   └── sqlalchemy_repository.py                #Database operations
     │           └── use_cases
-    │               ├── create_users.py
-    │               └── list_users.py
-    ├── docker-compose.local.yml
-    ├── docker-compose.yml
-    ├── Dockerfile
-    ├── migrations
+    │               ├── create_users.py                         # Create user use case
+    │               └── list_users.py                           # List users use case
+    ├── docker-compose.local.yml                                # Local development services
+    ├── docker-compose.yml                                      # Main docker compose configuration
+    ├── Dockerfile                                              # Docker image definition
+    ├── migrations                                              # Alembic migrations
     │   ├── env.py
     │   ├── README
     │   ├── script.py.mako
     │   └── versions
     │       └── 90bd21ec797f_user.py
-    ├── poetry.lock
-    ├── pyproject.toml
-    ├── README.md
-    ├── requirements.txt
-    ├── start.sh
-    └── tests
+    ├── poetry.lock                                             # Poetry dependency lock
+    ├── pyproject.toml                                          # Project dependencies & config
+    ├── README.md                                               # Project documentation
+    ├── requirements.txt                                        # Alternative pip dependencies
+    ├── start.sh                                                #Container startup script
+    └── tests                                                   # Unit tests
         └── users
             ├── fake_repository.py
             ├── test_create_user.py
