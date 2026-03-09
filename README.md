@@ -93,6 +93,7 @@ Technology Stack:
     │   ├── script.py.mako
     │   └── versions
     │       └── 90bd21ec797f_user.py
+    |
     ├── poetry.lock                                             # Poetry dependency lock
     ├── pyproject.toml                                          # Project dependencies & config
     ├── README.md                                               # Project documentation
