@@ -1,4 +1,4 @@
-from app.modules.users.use_cases.list_users import ListUsers
+from app.modules.users.services.list_users import ListUsers
 from tests.users.fake_repository import FakeUserRepository
 
 

@@ -1,3 +1,3 @@
 from app.core.database import Base
 
-from app.modules.users.infrastructure.models import *
+from app.modules.users.adapters.models import *

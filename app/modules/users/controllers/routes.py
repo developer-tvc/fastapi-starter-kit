@@ -1,7 +1,7 @@
-from app.modules.users.use_cases.create_users import CreateUser
-from app.modules.users.api import schemas
-from app.modules.users.infrastructure.sqlalchemy_repository import SQLAlchemyUserRepository
-from app.modules.users.use_cases.list_users import ListUsers
+from app.modules.users.services.create_users import CreateUser
+from app.modules.users.controllers import schemas
+from app.modules.users.adapters.sqlalchemy_repository import SQLAlchemyUserRepository
+from app.modules.users.services.list_users import ListUsers
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List
-from app.modules.users.domain.entities import User
+from app.modules.users.entities.entities import User
 
 """ Abstract repository that defines the contract for user data operations
  This ensures the domain layer does not depend on database implementations

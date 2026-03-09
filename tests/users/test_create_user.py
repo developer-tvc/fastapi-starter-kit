@@ -1,4 +1,4 @@
-from app.modules.users.use_cases.create_users import CreateUser
+from app.modules.users.services.create_users import CreateUser
 from tests.users.fake_repository import FakeUserRepository
 
 

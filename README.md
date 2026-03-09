@@ -14,7 +14,7 @@ Technology Stack:
 
         -Modular feature-based structure
 
-        -Separation of domain, infrastructure, and API layers
+        -Separation of entities, adapters, and controllers layers
 
         -Production-ready Docker setup
 
@@ -33,7 +33,7 @@ Technology Stack:
 
         -Business logic is independent of frameworks
 
-        -Infrastructure can be replaced without affecting domain logic
+        -Adapters can be replaced without affecting domain logic
 
         -High testability
 
@@ -41,13 +41,13 @@ Technology Stack:
 
     Architecture layers:
 
-        API Layer (FastAPI routes)
+        Controllers Layer (FastAPI routes)
                 ↓
         Application Layer (Use Cases)
                 ↓
-        Domain Layer (Entities + Repository Interfaces)
+        Entities Layer (Entities + Repository Interfaces)
                 ↓
-        Infrastructure Layer (Database / ORM Implementation)
+        Adapters Layer (Database / ORM Implementation)
 
 ### Project Structure
 
@@ -62,25 +62,27 @@ Technology Stack:
     │   ├── db
     │   │   └── base.py                                         # Base SQLAlchemy models import
     |   |
-    │   ├── main.py                                             #FastAPI entry point
+    │   ├── main.py                                             # FastAPI entry point
     |   |
     │   └── modules
-    │       └── users                                           #user module
-    │           ├── api
+    │       └── users                                           # user module
+    │           ├── controllers                                 # Handles HTTP requests and responses
     │           │   ├── routes.py                               # User API endpoints
     │           │   └── schemas.py                              # Pydantic request/response schemas
     |           |
-    │           ├── domain                                      #Business Logic
+    │           ├── entities                                    # Defines core business models
     │           │   ├── entities.py                   
     │           │   └── repositories.py
     |           |
-    │           ├── infrastructure                              # External implementations (DB, APIs, etc.)
-    │           │   ├── models.py                               #Database models
-    │           │   └── sqlalchemy_repository.py                #Database operations
+    │           ├── adapters                                    # Implements external systems such as:  databases, external APIs, file systems, etc
+    │           │   ├── models.py                               # Database models
+    │           │   └── sqlalchemy_repository.py                # Database operations
     |           |
-    │           └── use_cases                                   # Application business use cases
-    │               ├── create_users.py                         # Create user use case
-    │               └── list_users.py                           # List users use case
+    │           └── services                                    # Use cases depend only on domain interfaces, not infrastructure
+    │           |    ├── create_users.py                        # Create user use case
+    │           |    └── list_users.py                          # List users use case
+    |           |
+    │           └──  constant.py                                # Keep all constants here and use the corresponding variable names in our code
     |
     ├── docker-compose.local.yml                                # Local development services
     ├── docker-compose.yml                                      # Main docker compose configuration
@@ -95,7 +97,7 @@ Technology Stack:
     ├── pyproject.toml                                          # Project dependencies & config
     ├── README.md                                               # Project documentation
     ├── requirements.txt                                        # Alternative pip dependencies
-    ├── start.sh                                                #Container startup script
+    ├── start.sh                                                # Container startup script
     └── tests                                                   # Unit tests
         └── users
             ├── fake_repository.py
@@ -105,7 +107,7 @@ Technology Stack:
 
 ### Layer Responsibilities
 
--API Layer
+-controllers Layer
 
     Handles HTTP requests and responses.
 
@@ -127,10 +129,10 @@ Technology Stack:
 
         -Update user
 
-    Use cases depend only on domain interfaces, not infrastructure.
+    Use cases depend only on domain interfaces, not adapters.
 
 
--Domain Layer
+-Entities Layer
 
     Defines core business models.
 
@@ -141,7 +143,7 @@ Technology Stack:
     This layer must not depend on any framework.
 
 
--Infrastructure Layer
+-Adapters Layer
 
     Implements external systems such as:
 
