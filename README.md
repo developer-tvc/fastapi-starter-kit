@@ -58,23 +58,30 @@ Technology Stack:
     │   │   ├── database.py                                     # Database connection setup
     │   │   ├── dependencies.py                                 # Shared FastAPI dependencies
     │   │   └── security.py                                     # Authentication & security utilities
+    |   |
     │   ├── db
     │   │   └── base.py                                         # Base SQLAlchemy models import
+    |   |
     │   ├── main.py                                             #FastAPI entry point
+    |   |
     │   └── modules
     │       └── users                                           #user module
     │           ├── api
     │           │   ├── routes.py                               # User API endpoints
     │           │   └── schemas.py                              # Pydantic request/response schemas
+    |           |
     │           ├── domain                                      #Business Logic
     │           │   ├── entities.py                   
     │           │   └── repositories.py
-    │           ├── infrastructure
+    |           |
+    │           ├── infrastructure                              # External implementations (DB, APIs, etc.)
     │           │   ├── models.py                               #Database models
     │           │   └── sqlalchemy_repository.py                #Database operations
-    │           └── use_cases
+    |           |
+    │           └── use_cases                                   # Application business use cases
     │               ├── create_users.py                         # Create user use case
     │               └── list_users.py                           # List users use case
+    |
     ├── docker-compose.local.yml                                # Local development services
     ├── docker-compose.yml                                      # Main docker compose configuration
     ├── Dockerfile                                              # Docker image definition
