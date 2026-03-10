@@ -1,17 +1,24 @@
-"""FastAPI application entry-point."""
-
-from __future__ import annotations
-
 from fastapi import FastAPI
+from app.core.config import settings
+from app.modules.users.controllers.routes import router as users_router
 
-app = FastAPI(
-    title="FastAPI Starter Kit",
-    description="A simple FastAPI starter project.",
-    version="0.1.0",
-)
+def create_app() -> FastAPI:
+    app = FastAPI(
+        title=settings.APP_NAME,
+        description=settings.DESCRIPTION,
+        version="1.0.0",
+        docs_url="/docs",
+        redoc_url="/redoc",
+        openapi_url="/openapi.json",
+    )
+
+    app.include_router(
+        users_router,
+        prefix="/api/v1/users",
+        tags=["Users"],
+    )  # User module router
+
+    return app
 
 
-@app.get("/", tags=["Health"])
-def root():
-    """Health-check / welcome endpoint."""
-    return {"message": "FastAPI Starter Kit"}
+app = create_app()

@@ -1,28 +1,31 @@
 [project]
-name = "fastapi-starter-kit"
+name = "fastapi-skeleton"
 version = "0.1.0"
-description = "A minimal FastAPI starter kit with health-check endpoint and quality tooling."
-requires-python = ">=3.10"
+description = ""
+authors = [
+    {name = "Your Name",email = "you@example.com"}
+]
+requires-python = "^3.11"
+dependencies = [
+    "fastapi (>=0.135.1,<0.136.0)",
+    "uvicorn[standard] (>=0.41.0,<0.42.0)",
+    "sqlalchemy (>=2.0.48,<3.0.0)",
+    "psycopg2-binary (>=2.9.11,<3.0.0)",
+    "pydantic-settings (>=2.13.1,<3.0.0)",
+    "passlib[bcrypt] (>=1.7.4,<2.0.0)",
+    "python-jose[cryptography] (>=3.5.0,<4.0.0)",
+    "alembic (>=1.18.4,<2.0.0)",
+    "pydantic[email] (>=2.12.5,<3.0.0)",
+    "dotenv (>=0.9.9,<0.10.0)",
+    "bcrypt (==3.2.2)"
+]
 
-# ---------------------------------------------------------------------------
-# Tool configuration
-# ---------------------------------------------------------------------------
 
-[tool.black]
-line-length = 88
-target-version = ["py310", "py312"]
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
 
-[tool.isort]
-profile = "black"
-known_first_party = ["app"]
-
-[tool.pylint.messages_control]
-disable = ["C0114", "C0115", "C0116"]  # missing docstring warnings (optional)
-
-[tool.mypy]
-python_version = "3.10"
-strict = false
-ignore_missing_imports = true
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]
+[dependency-groups]
+dev = [
+    "pytest (>=9.0.2,<10.0.0)"
+]

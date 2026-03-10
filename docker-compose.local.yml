@@ -1,0 +1,8 @@
+version: "3.9"
+
+services:
+  fast_skeleton:
+    environment:
+      DATABASE_URL: postgresql://postgres:root@host.docker.internal:5432/FastApiSkeleton
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
