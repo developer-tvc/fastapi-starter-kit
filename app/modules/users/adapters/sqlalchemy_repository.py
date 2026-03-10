@@ -43,3 +43,15 @@ class  SQLAlchemyUserRepository(UserRepository):
             full_name=user.full_name,
             is_active=user.is_active
         )
+
+    def get_by_id(self, user_id: int):
+        user = self.db.query(UserModel).filter(UserModel.id == user_id).first()
+        if not user:
+            return None
+        return User(
+            id=user.id,
+            email=user.email,
+            password_hash=user.password,
+            full_name=user.full_name,
+            is_active=user.is_active
+        )
