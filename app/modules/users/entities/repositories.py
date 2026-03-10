@@ -20,3 +20,10 @@ class UserRepository(ABC):
     @abstractmethod
     def create_user(self, user: User) -> User:
         pass
+
+    """ method to get user by email
+    Accepts an email and returns the User
+    """
+    @abstractmethod
+    def get_by_email(self, email: str) -> User:
+        pass

@@ -31,3 +31,15 @@ class  SQLAlchemyUserRepository(UserRepository):
             password_hash=new_user.password,
             is_active=new_user.is_active
         )
+
+    def get_by_email(self, email: str):
+        user = self.db.query(UserModel).filter(UserModel.email == email).first()
+        if not user:
+            return None
+        return User(
+            id=user.id,
+            email=user.email,
+            password_hash=user.password,
+            full_name=user.full_name,
+            is_active=user.is_active
+        )

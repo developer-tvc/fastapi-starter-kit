@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from app.core.config import settings
 from app.modules.users.controllers.routes import router as users_router
+from app.modules.auth.controllers.routes import router as auth_router
 
 def create_app() -> FastAPI:
     app = FastAPI(
@@ -17,6 +18,11 @@ def create_app() -> FastAPI:
         prefix="/api/v1/users",
         tags=["Users"],
     )  # User module router
+    app.include_router(
+        auth_router,
+        prefix="/api/v1/auth",
+        tags=["Auth"],
+    )  # Auth module router
 
     return app
 
