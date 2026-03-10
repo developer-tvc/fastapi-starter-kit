@@ -43,7 +43,7 @@ Technology Stack:
 
         Controllers Layer (FastAPI routes)
                 ↓
-        Application Layer (Use Cases)
+        Application Layer (Services)
                 ↓
         Entities Layer (Entities + Repository Interfaces)
                 ↓
@@ -78,9 +78,9 @@ Technology Stack:
     │           │   ├── models.py                               # Database models
     │           │   └── sqlalchemy_repository.py                # Database operations
     |           |
-    │           └── services                                    # Use cases depend only on domain interfaces, not infrastructure
-    │           |    ├── create_users.py                        # Create user use case
-    │           |    └── list_users.py                          # List users use case
+    │           └── services                                    # Services depend only on entities interfaces, not adapters
+    │           |    ├── create_users.py                        # Create user services
+    │           |    └── list_users.py                          # List users services
     |           |
     │           └──  constant.py                                # Keep all constants here and use the corresponding variable names in our code
     |
@@ -118,7 +118,7 @@ Technology Stack:
 
         -Response serialization
 
--Use Cases
+-Services
 
     Contains application business logic.
 
@@ -130,7 +130,7 @@ Technology Stack:
 
         -Update user
 
-    Use cases depend only on domain interfaces, not adapters.
+    Services depend only on entities interfaces, not adapters.
 
 
 -Entities Layer
