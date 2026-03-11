@@ -68,3 +68,19 @@ class  SQLAlchemyUserRepository(UserRepository):
             full_name=user.full_name,
             is_active=user.is_active
         )
+    
+    def update_password(self, user_id: int, password: str):
+        user = self.db.query(UserModel).filter(UserModel.id == user_id).first()
+        if not user:
+            return None
+        user.password = password
+        self.db.commit()
+        self.db.refresh(user)
+        return User(
+            id=user.id,
+            email=user.email,
+            password_hash=user.password,
+            full_name=user.full_name,
+            is_active=user.is_active
+        )
+    

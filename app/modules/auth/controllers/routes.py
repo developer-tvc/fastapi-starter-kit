@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends,BackgroundTasks
 from sqlalchemy.orm import Session
 from app.core.dependencies import get_db
 from app.modules.auth.services.user_login import LoginUserService
@@ -10,6 +10,13 @@ from app.modules.auth.controllers.schemas import RefreshRequest
 from app.modules.auth.services.logout_user import LogoutUserService
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from app.modules.auth.adapters.blacklist_repository import BlacklistRepository
+from app.core.schemas.response import APIResponse
+from app.core.security import create_password_reset_token, verify_password_reset_token, hash_password
+from app.core.services.email_service import send_email
+from app.core.services.email_templates import password_reset_email
+from app.modules.auth.services.reset_password_request import ResetPasswordRequestService
+from app.modules.auth.services.confirm_password_reset import ConfirmPasswordResetService
+from fastapi import HTTPException
 
 security = HTTPBearer()
 
@@ -65,3 +72,42 @@ async def logout(
     service = LogoutUserService(blacklist_repo)
 
     return await service.execute(token)
+
+
+@router.post("/password-reset/request", response_model=APIResponse[None])
+def request_password_reset(
+    payload: schemas.PasswordResetRequest,
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db)
+):
+    repo = SQLAlchemyUserRepository(db)
+    service = ResetPasswordRequestService(repo)
+    
+    service.execute(payload, background_tasks)
+    
+
+    return APIResponse.success_response(
+        message="If the email exists, a reset link has been sent"
+    )
+
+
+@router.post("/password-reset/confirm", response_model=APIResponse[None])
+def confirm_password_reset(
+    payload: schemas.PasswordResetConfirm,
+    db: Session = Depends(get_db)
+):
+    user_id = verify_password_reset_token(payload.token)
+
+    if not user_id:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid or expired token"
+        )
+    hashed_password = hash_password(payload.new_password)
+    repo = SQLAlchemyUserRepository(db)
+    service = ConfirmPasswordResetService(repo)
+    service.execute(user_id, hashed_password)
+
+    return APIResponse.success_response(
+        message="Password reset successfully"
+    )

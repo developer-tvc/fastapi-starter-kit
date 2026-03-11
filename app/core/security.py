@@ -146,3 +146,33 @@ def require_permission(permission: str):
         return current_user
 
     return permission_checker
+
+
+
+
+def create_password_reset_token(user_id: int):
+
+    expire = datetime.utcnow() + timedelta(minutes=30)
+
+    payload = {
+        "sub": str(user_id),
+        "type": "password_reset",
+        "exp": expire
+    }
+
+    return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+
+
+
+def verify_password_reset_token(token: str):
+
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
+
+        if payload.get("type") != "password_reset":
+            return None
+
+        return int(payload.get("sub"))
+
+    except JWTError:
+        return None
