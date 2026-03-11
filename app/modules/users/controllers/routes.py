@@ -2,7 +2,7 @@ from app.modules.users.services.create_users import CreateUser
 from app.modules.users.controllers import schemas
 from app.modules.users.adapters.sqlalchemy_repository import SQLAlchemyUserRepository
 from app.modules.users.services.list_users import ListUsers
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends,BackgroundTasks
 from sqlalchemy.orm import Session
 from app.modules.users.entities.entities import User
 from app.core.dependencies import get_db
@@ -33,6 +33,7 @@ def read_users(db: Session = Depends(get_db),
 @router.post("/", response_model=APIResponse[schemas.UserResponse])
 def create_user(
     user: schemas.UserCreate,  # Request body containing user data
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),  # Inject database session
     current_user: User = Depends(require_permission(constants.CREATE_PERMISSION))
 ):
@@ -42,7 +43,8 @@ def create_user(
         user.email,
         user.password,
         user.full_name,
-        user.roles
+        user.roles,
+        background_tasks
     )
 
     return APIResponse.success_response(created_user, "User created successfully")

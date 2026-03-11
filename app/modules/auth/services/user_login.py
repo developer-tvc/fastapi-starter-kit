@@ -10,6 +10,8 @@ class LoginUserService:
         user = self.user_repository.get_by_email(email)
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
+        if not user.is_verified:
+            raise HTTPException(status_code=401, detail="User not verified. Please verify your email first.")
         if not verify_password(password, user.password_hash):
             raise HTTPException(status_code=401, detail="Invalid password")
         access_token = create_access_token({"sub": str(user.id)})

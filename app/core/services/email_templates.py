@@ -15,3 +15,20 @@ def password_reset_email(reset_link: str) -> str:
         Thanks,
         Support Team
         """
+
+def email_verification_template(verify_link: str):
+
+    return f"""
+        Hello,
+
+        Please verify your email by clicking the link below:
+
+        {verify_link}
+
+        This link will expire in 24 hours.
+
+        If you did not create this account, please ignore this email.
+
+        Thanks,
+        Support Team
+        """

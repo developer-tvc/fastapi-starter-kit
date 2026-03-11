@@ -176,3 +176,37 @@ def verify_password_reset_token(token: str):
 
     except JWTError:
         return None
+
+
+def create_email_verification_token(user_id: int):
+
+    payload = {
+        "sub": str(user_id),
+        "type": "email_verification",
+        "exp": datetime.utcnow() + timedelta(hours=24)
+    }
+
+    token = jwt.encode(
+        payload,
+        SECRET_KEY,
+        algorithm=ALGORITHM
+    )
+
+    return token
+
+def verify_email_token(token: str):
+
+    try:
+        payload = jwt.decode(
+            token,
+            settings.SECRET_KEY,
+            algorithms=[settings.ALGORITHM]
+        )
+
+        if payload.get("type") != "email_verification":
+            return None
+
+        return int(payload.get("sub"))
+
+    except JWTError:
+        return None

@@ -16,6 +16,8 @@ from app.core.services.email_service import send_email
 from app.core.services.email_templates import password_reset_email
 from app.modules.auth.services.reset_password_request import ResetPasswordRequestService
 from app.modules.auth.services.confirm_password_reset import ConfirmPasswordResetService
+from app.modules.auth.services.verify_user import VerifyUserService
+from app.core.security import verify_email_token
 from fastapi import HTTPException
 
 security = HTTPBearer()
@@ -110,4 +112,25 @@ def confirm_password_reset(
 
     return APIResponse.success_response(
         message="Password reset successfully"
+    )
+
+
+
+@router.post("/verify-email", response_model=APIResponse[None])
+def verify_email(
+    payload: schemas.EmailVerificationRequest,
+    db: Session = Depends(get_db)
+):
+
+    user_id = verify_email_token(payload.token)
+
+    if not user_id:
+        return APIResponse.error_response("Invalid or expired token")
+
+    repo = SQLAlchemyUserRepository(db)
+    service = VerifyUserService(repo)
+    service.execute(user_id)
+    
+    return APIResponse.success_response(
+        message="Email verified successfully"
     )

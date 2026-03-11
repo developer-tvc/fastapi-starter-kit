@@ -34,3 +34,7 @@ class UserRepository(ABC):
     @abstractmethod
     def get_by_id(self, user_id: int) -> User:
         pass
+
+    @abstractmethod
+    def verify_user(self, user_id: int) -> User:
+        pass

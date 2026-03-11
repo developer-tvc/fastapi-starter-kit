@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     SMTP_PORT:int
     SMTP_USERNAME:str
     SMTP_PASSWORD:str
+    EMAIL_VERIFICATION_ENABLED: bool
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",

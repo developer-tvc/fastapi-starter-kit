@@ -19,12 +19,11 @@ class  SQLAlchemyUserRepository(UserRepository):
         
         return [User(id=user.id, email=user.email, full_name=user.full_name, password_hash=user.password, is_active=user.is_active) for user in users]
     # Create a new user in the database
-    def create_user(self, email: str, password: str, full_name: str, roles: list[int] = []):
+    def create_user(self, email: str, password: str, full_name: str, roles: list[int] = [],is_verified: bool = False):
         
-        new_user = UserModel(email=email, full_name=full_name, password=password, is_active=True)
+        new_user = UserModel(email=email, full_name=full_name, password=password, is_active=True, is_verified=is_verified)
         self.db.add(new_user)
-        self.db.commit()
-        self.db.refresh(new_user)
+        self.db.flush()
 
         # Assign roles
         for role_id in roles:
@@ -42,7 +41,8 @@ class  SQLAlchemyUserRepository(UserRepository):
             full_name=new_user.full_name,
             password_hash=new_user.password,
             is_active=new_user.is_active,
-            roles=[role.role_id for role in new_user.roles]
+            roles=[role.role_id for role in new_user.roles],
+            is_verified=new_user.is_verified
         )
 
     def get_by_email(self, email: str):
@@ -54,7 +54,8 @@ class  SQLAlchemyUserRepository(UserRepository):
             email=user.email,
             password_hash=user.password,
             full_name=user.full_name,
-            is_active=user.is_active
+            is_active=user.is_active,
+            is_verified=user.is_verified
         )
 
     def get_by_id(self, user_id: int):
@@ -66,7 +67,8 @@ class  SQLAlchemyUserRepository(UserRepository):
             email=user.email,
             password_hash=user.password,
             full_name=user.full_name,
-            is_active=user.is_active
+            is_active=user.is_active,
+            is_verified=user.is_verified
         )
     
     def update_password(self, user_id: int, password: str):
@@ -81,6 +83,21 @@ class  SQLAlchemyUserRepository(UserRepository):
             email=user.email,
             password_hash=user.password,
             full_name=user.full_name,
-            is_active=user.is_active
+            is_active=user.is_active,
+            is_verified=user.is_verified
         )
-    
+    def verify_user(self, user_id: int):
+        user = self.db.query(UserModel).filter(UserModel.id == user_id).first()
+        if not user:
+            return None
+        user.is_verified = True
+        self.db.commit()
+        self.db.refresh(user)
+        return User(
+            id=user.id,
+            email=user.email,
+            password_hash=user.password,
+            full_name=user.full_name,
+            is_active=user.is_active,
+            is_verified=user.is_verified
+        )

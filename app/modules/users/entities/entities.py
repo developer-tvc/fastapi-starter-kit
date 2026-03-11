@@ -12,7 +12,7 @@ class User:
           at the boundaries (use-cases / services) before constructing the entity.
     """
 
-    def __init__(self, id: int, email: str, full_name: str, password_hash: str, is_active: bool = True, roles: list[int] = []):
+    def __init__(self, id: int, email: str, full_name: str, password_hash: str, is_active: bool = True, roles: list[int] = [], is_verified: bool = False):
         """
         Create a new User entity.
 
@@ -30,6 +30,7 @@ class User:
         self.password_hash = password_hash  # hash only; never store or accept plaintext here
         self.is_active = is_active
         self.roles = roles
+        self.is_verified = is_verified
 
     def deactivate(self):
         """

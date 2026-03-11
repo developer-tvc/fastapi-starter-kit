@@ -10,5 +10,5 @@ class UserModel(Base):
     password = Column(String)
     is_active = Column(Boolean, default=True)
     full_name = Column(String, nullable=True)
-
+    is_verified = Column(Boolean, default=False)
     roles = relationship("UserRoleModel", back_populates="user")
