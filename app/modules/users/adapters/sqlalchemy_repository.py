@@ -3,6 +3,7 @@ from app.modules.users.entities.repositories import UserRepository
 from app.modules.users.entities.entities import User
 from app.modules.users.adapters.models import UserModel
 from app.modules.roles.adapters.models import UserRoleModel
+from datetime import datetime
 
 """ Implementation of UserRepository using SQLAlchemy
  Concrete implementation of the UserRepository interface
@@ -163,5 +164,7 @@ class  SQLAlchemyUserRepository(UserRepository):
         user = self.db.query(UserModel).filter(UserModel.id == user_id).first()
         if not user:
             return None
-        self.db.delete(user)
+        user.is_deleted = True
+        user.deleted_at = datetime.utcnow()
+
         self.db.commit()

@@ -14,7 +14,7 @@ from app.modules.users.services.update_user import UpdateUser
 from app.modules.users.services.delete_user import DeleteUser
 
 router = APIRouter(
-    prefix="/users",
+    
     tags=["Users"],
 )
 
@@ -52,6 +52,27 @@ def create_user(
 
     return APIResponse.success_response(created_user, "User created successfully")
 
+@router.get("/profile",response_model=APIResponse[schemas.UserResponse])
+def get_me(db: Session = Depends(get_db),
+    current_user: User = Depends(require_permission(constants.VIEW_PERMISSION))
+):
+    repo = SQLAlchemyUserRepository(db)
+    use_case = GetUser(repo)
+    return APIResponse.success_response(
+        data=use_case.execute(current_user.id),
+        message="User fetched successfully",
+    )
+
+@router.patch("/profile",response_model=APIResponse[schemas.UserProfileResponse])
+def update_profile(user: schemas.UserProfileUpdate, db: Session = Depends(get_db),
+    current_user: User = Depends(require_permission(constants.UPDATE_PERMISSION))
+):
+    repo = SQLAlchemyUserRepository(db)
+    use_case = UpdateUser(repo)
+    return APIResponse.success_response(
+        data=use_case.execute(current_user.id, user),
+        message="User updated successfully",
+    )
 
 @router.get("/{user_id}",response_model=APIResponse[schemas.UserResponse])
 def get_user(user_id: int, db: Session = Depends(get_db),

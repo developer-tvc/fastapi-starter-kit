@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, Boolean
 from app.core.database import Base
 from sqlalchemy.orm import relationship
+from sqlalchemy import DateTime
 
 class UserModel(Base):
     __tablename__ = "users"
@@ -10,5 +11,10 @@ class UserModel(Base):
     password = Column(String)
     is_active = Column(Boolean, default=True)
     full_name = Column(String, nullable=True)
+    phone = Column(String, nullable=True)
+    profile_picture = Column(String, nullable=True)
     is_verified = Column(Boolean, default=False)
     roles = relationship("UserRoleModel", back_populates="user",cascade="all, delete-orphan")
+    is_deleted = Column(Boolean, default=False)
+    deleted_at = Column(DateTime, nullable=True)
+    last_login_at = Column(DateTime, nullable=True)
