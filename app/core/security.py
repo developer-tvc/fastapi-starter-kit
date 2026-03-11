@@ -11,6 +11,8 @@ from jose import JWTError
 from fastapi.security import HTTPAuthorizationCredentials
 import uuid
 from app.modules.auth.adapters.blacklist_repository import BlacklistRepository
+from app.modules.roles.adapters.sqlalchemy_repository import SQLAlchemyRoleRepository
+from app.modules.roles.services.check_permission import CheckPermissionService
 
 SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = settings.ALGORITHM
@@ -121,3 +123,26 @@ def verify_refresh_token(refresh_token: str):
 
     except JWTError:
         raise credentials_exception
+
+
+
+def require_permission(permission: str):
+
+    def permission_checker(
+        current_user = Depends(get_current_user),
+        db: Session = Depends(get_db)
+    ):
+
+        repo = SQLAlchemyRoleRepository(db)
+        service = CheckPermissionService(repo)
+
+        allowed = service.execute(current_user.id, permission)
+
+        if not allowed:
+            raise HTTPException(
+                status_code=403,
+                detail="Permission denied"
+            )
+        return current_user
+
+    return permission_checker

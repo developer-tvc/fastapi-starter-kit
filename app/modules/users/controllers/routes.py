@@ -4,9 +4,10 @@ from app.modules.users.adapters.sqlalchemy_repository import SQLAlchemyUserRepos
 from app.modules.users.services.list_users import ListUsers
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from app.core.security import get_current_user
 from app.modules.users.entities.entities import User
 from app.core.dependencies import get_db
+from app.core.security import require_permission
+from app.modules.users import constants
 
 
 router = APIRouter(
@@ -17,7 +18,7 @@ router = APIRouter(
 
 @router.get("/", response_model=list[schemas.UserList])
 def read_users(db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(require_permission(constants.VIEW_PERMISSION))
     ):
     repo = SQLAlchemyUserRepository(db)
     use_case = ListUsers(repo)
@@ -28,7 +29,8 @@ def read_users(db: Session = Depends(get_db),
 def create_user(
     user: schemas.UserCreate,  # Request body containing user data
     db: Session = Depends(get_db),  # Inject database session
+    current_user: User = Depends(require_permission(constants.CREATE_PERMISSION))
 ):
     repo = SQLAlchemyUserRepository(db)
     use_case = CreateUser(repo)
-    return use_case.execute(user.email, user.password, user.full_name)
+    return use_case.execute(user.email, user.password, user.full_name, user.roles)

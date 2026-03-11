@@ -19,6 +19,7 @@ class UserCreate(BaseModel):
     password: str  
     email: EmailStr
     full_name: str
+    roles: list[int] = []
 
 class UserResponse(UserBase):
     id: int

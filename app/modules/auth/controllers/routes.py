@@ -61,7 +61,6 @@ async def logout(
 ):
 
     token = credentials.credentials
-    print("token", token)
     blacklist_repo = BlacklistRepository(db)
     service = LogoutUserService(blacklist_repo)
 
