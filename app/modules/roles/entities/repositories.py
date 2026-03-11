@@ -39,3 +39,23 @@ class RoleRepository(ABC):
     @abstractmethod
     def delete_role(self, role_id: int):
         pass
+
+    @abstractmethod
+    def assign_permission(self, role_id: int, permission_id: int):
+        pass
+
+    @abstractmethod
+    def unassign_permission(self, role_id: int, permission_id: int):
+        pass
+
+    @abstractmethod
+    def get_user_permissions(self, user_id: int) -> List[str]:
+        pass
+
+    @abstractmethod
+    def assign_role(self, user_id: int, role_id: int):
+        pass
+
+    @abstractmethod
+    def unassign_role(self, user_id: int, role_id: int):
+        pass
