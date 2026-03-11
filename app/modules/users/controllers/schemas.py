@@ -27,3 +27,12 @@ class UserResponse(UserBase):
     model_config = {
         "from_attributes": True
     }
+
+class UserUpdate(BaseModel):
+    full_name: str | None = None
+    roles: list[int] | None = None
+
+    model_config = {
+        "from_attributes": True
+    }
+

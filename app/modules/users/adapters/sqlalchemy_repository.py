@@ -101,3 +101,67 @@ class  SQLAlchemyUserRepository(UserRepository):
             is_active=user.is_active,
             is_verified=user.is_verified
         )
+
+    def get_by_id(self, user_id: int):
+        user = self.db.query(UserModel).filter(UserModel.id == user_id).first()
+        if not user:
+            return None
+        return User(
+            id=user.id,
+            email=user.email,
+            password_hash=user.password,
+            full_name=user.full_name,
+            is_active=user.is_active,
+            is_verified=user.is_verified
+        )
+    
+    def update(self, user_id: int, user: dict):
+
+        user_obj = self.db.query(UserModel).filter(UserModel.id == user_id).first()
+
+        if not user_obj:
+            return None
+
+        # extract roles
+        roles = user.pop("roles", None)
+
+        # update normal fields
+        for key, value in user.items():
+            setattr(user_obj, key, value)
+
+        # update roles
+        if roles is not None:
+
+            # remove existing roles
+            self.db.query(UserRoleModel).filter(
+                UserRoleModel.user_id == user_id
+            ).delete()
+
+            # insert new roles
+            for role_id in roles:
+                self.db.add(
+                    UserRoleModel(
+                        user_id=user_id,
+                        role_id=role_id
+                    )
+                )
+
+        self.db.commit()
+        self.db.refresh(user_obj)
+
+        return User(
+            id=user_obj.id,
+            email=user_obj.email,
+            password_hash=user_obj.password,
+            full_name=user_obj.full_name,
+            is_active=user_obj.is_active,
+            is_verified=user_obj.is_verified,
+            roles=roles if roles else [r.role_id for r in user_obj.roles]
+        )
+    
+    def delete(self, user_id: int) -> None:
+        user = self.db.query(UserModel).filter(UserModel.id == user_id).first()
+        if not user:
+            return None
+        self.db.delete(user)
+        self.db.commit()

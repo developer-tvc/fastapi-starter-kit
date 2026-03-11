@@ -9,6 +9,9 @@ from app.core.dependencies import get_db
 from app.core.security import require_permission
 from app.modules.users import constants
 from app.core.schemas.response import APIResponse
+from app.modules.users.services.get_user import GetUser
+from app.modules.users.services.update_user import UpdateUser
+from app.modules.users.services.delete_user import DeleteUser
 
 router = APIRouter(
     prefix="/users",
@@ -48,3 +51,37 @@ def create_user(
     )
 
     return APIResponse.success_response(created_user, "User created successfully")
+
+
+@router.get("/{user_id}",response_model=APIResponse[schemas.UserResponse])
+def get_user(user_id: int, db: Session = Depends(get_db),
+    current_user: User = Depends(require_permission(constants.VIEW_PERMISSION))
+):
+    repo = SQLAlchemyUserRepository(db)
+    use_case = GetUser(repo)
+    return APIResponse.success_response(
+        data=use_case.execute(user_id),
+        message="User fetched successfully",
+    )
+
+@router.put("/{user_id}",response_model=APIResponse[schemas.UserResponse])
+def update_user(user_id: int, user: schemas.UserUpdate, db: Session = Depends(get_db),
+    current_user: User = Depends(require_permission(constants.UPDATE_PERMISSION))
+):
+    repo = SQLAlchemyUserRepository(db)
+    use_case = UpdateUser(repo)
+    return APIResponse.success_response(
+        data=use_case.execute(user_id, user),
+        message="User updated successfully",
+    )
+
+@router.delete("/{user_id}",response_model=APIResponse[None])
+def delete_user(user_id: int, db: Session = Depends(get_db),
+    current_user: User = Depends(require_permission(constants.DELETE_PERMISSION))
+):
+    repo = SQLAlchemyUserRepository(db)
+    use_case = DeleteUser(repo)
+    return APIResponse.success_response(
+        data=use_case.execute(user_id),
+        message="User deleted successfully",
+    )

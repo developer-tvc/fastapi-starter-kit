@@ -38,3 +38,12 @@ class UserRepository(ABC):
     @abstractmethod
     def verify_user(self, user_id: int) -> User:
         pass
+    
+    @abstractmethod
+    def update(self, user_id: int, user: dict) -> User:
+        pass
+    
+    @abstractmethod
+    def delete(self, user_id: int) -> None:
+        pass
+    
