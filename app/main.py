@@ -6,7 +6,7 @@ from app.modules.users.controllers.routes import router as users_router
 from app.modules.auth.controllers.routes import router as auth_router
 from app.modules.roles.controllers.routes import router as role_router
 
-from app.modules.activity_logs.request_context import current_ip
+from app.core.middleware.activity_context import activity_context_middleware
 
 
 def create_app() -> FastAPI:
@@ -22,16 +22,7 @@ def create_app() -> FastAPI:
     # -----------------------------
     # Activity Log Middleware
     # -----------------------------
-    @app.middleware("http")
-    async def activity_context_middleware(request: Request, call_next):
-
-        # Capture client IP
-        if request.client:
-            current_ip.set(request.client.host)
-
-        response = await call_next(request)
-
-        return response
+    app.middleware("http")(activity_context_middleware)
 
     # -----------------------------
     # Routers

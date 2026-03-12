@@ -56,7 +56,10 @@ class  SQLAlchemyUserRepository(UserRepository):
             password_hash=user.password,
             full_name=user.full_name,
             is_active=user.is_active,
-            is_verified=user.is_verified
+            is_verified=user.is_verified,
+            failed_login_attempts=user.failed_login_attempts,
+            is_locked=user.is_locked,
+            locked_until=user.locked_until
         )
 
     def get_by_id(self, user_id: int):
@@ -168,3 +171,81 @@ class  SQLAlchemyUserRepository(UserRepository):
         user.deleted_at = datetime.utcnow()
 
         self.db.commit()
+
+    def update_last_login(self, user_id: int, last_login_at: datetime) -> None:
+        user = self.db.query(UserModel).filter(UserModel.id == user_id).first()
+        if not user:
+            return None
+        user.last_login_at = last_login_at
+        self.db.commit()
+        self.db.refresh(user)
+        return User(
+            id=user.id,
+            email=user.email,
+            password_hash=user.password,
+            full_name=user.full_name,
+            is_active=user.is_active,
+            is_verified=user.is_verified,
+            last_login_at=user.last_login_at
+        )
+
+    def update_ip_address(self, user_id: int, ip_address: str) -> None:
+        user = self.db.query(UserModel).filter(UserModel.id == user_id).first()
+        if not user:
+            return None
+        user.ip_address = ip_address
+        self.db.commit()
+        self.db.refresh(user)
+        return User(
+            id=user.id,
+            email=user.email,
+            password_hash=user.password,
+            full_name=user.full_name,
+            is_active=user.is_active,
+            is_verified=user.is_verified,
+            ip_address=user.ip_address
+        )
+
+    def update_failed_login(self, user_id: int, is_locked: bool, locked_until: datetime) -> None:
+        user = self.db.query(UserModel).filter(UserModel.id == user_id).first()
+
+        if not user:
+            return None
+
+        user.is_locked = is_locked
+        user.locked_until = locked_until
+
+        self.db.commit()
+        self.db.refresh(user)
+        return User(
+            id=user.id,
+            email=user.email,
+            password_hash=user.password,
+            full_name=user.full_name,
+            is_active=user.is_active,
+            is_verified=user.is_verified,
+            is_locked=user.is_locked,
+            locked_until=user.locked_until
+        )
+
+    def update_failed_login_attempts(self, user_id: int, failed_login_attempts: int, attempt: bool) -> None:
+        user = self.db.query(UserModel).filter(UserModel.id == user_id).first()
+        if not user:
+            return None
+        if not attempt:
+            user.failed_login_attempts += 1
+        else:
+            user.failed_login_attempts = 0
+        
+
+        self.db.commit()
+        self.db.refresh(user)
+        return User(
+            id=user.id,
+            email=user.email,
+            password_hash=user.password,
+            full_name=user.full_name,
+            is_active=user.is_active,
+            is_verified=user.is_verified,
+            failed_login_attempts=user.failed_login_attempts
+        )

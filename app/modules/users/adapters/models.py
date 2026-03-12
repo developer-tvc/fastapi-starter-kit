@@ -19,3 +19,8 @@ class UserModel(Base, AuditModelMixin):
     is_deleted = Column(Boolean, default=False)
     deleted_at = Column(DateTime, nullable=True)
     last_login_at = Column(DateTime, nullable=True)
+    failed_login_attempts = Column(Integer, default=0)
+    is_locked = Column(Boolean, default=False)
+    locked_until = Column(DateTime, nullable=True)
+    last_failed_login_at = Column(DateTime, nullable=True)
+    ip_address = Column(String, nullable=True)    

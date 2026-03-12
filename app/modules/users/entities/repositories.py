@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 from app.modules.users.entities.entities import User
+from datetime import datetime
 
 """ Abstract repository that defines the contract for user data operations
  This ensures the domain layer does not depend on database implementations
@@ -46,4 +47,15 @@ class UserRepository(ABC):
     @abstractmethod
     def delete(self, user_id: int) -> None:
         pass
-    
+    @abstractmethod
+    def update_last_login(self, user_id: int, last_login_at: datetime) -> None:
+        pass
+    @abstractmethod
+    def update_ip_address(self, user_id: int, ip_address: str) -> None:
+        pass
+    @abstractmethod
+    def update_failed_login(self, user_id: int,is_locked: bool, locked_until: datetime) -> None:
+        pass
+    @abstractmethod
+    def update_failed_login_attempts(self, user_id: int, failed_login_attempts: int, attempt: bool) -> None:
+        pass

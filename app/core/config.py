@@ -18,6 +18,10 @@ class Settings(BaseSettings):
     SMTP_USERNAME:str
     SMTP_PASSWORD:str
     EMAIL_VERIFICATION_ENABLED: bool
+    LOGIN_MAX_ATTEMPTS:int
+    LOGIN_LOCK_ENABLED:bool
+    LOGIN_LOCK_MINUTES:int
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
