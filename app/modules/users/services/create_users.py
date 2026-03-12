@@ -3,6 +3,7 @@ from app.core.config import get_settings
 from app.core.services.email_service import send_email
 from app.core.security import create_email_verification_token
 from app.core.services.email_templates import email_verification_template
+from app.modules.notifications.services.notification_service import NotificationService
 
 settings = get_settings()
 
@@ -11,8 +12,9 @@ class CreateUser:
     # Initialize the use case with a user repository
     def __init__(self, repo):
         self.repo = repo
+        self.db=repo.db
     # Execute the user creation process
-    def execute(self, email: str, password: str, full_name: str, roles: list[int] = [], background_tasks = None):
+    def execute(self, email: str, password: str, full_name: str, roles: list[int] = [], background_tasks = None, current_user = None):
         
         # Hash the plain password before storing it in the database
         password_hash = hash_password(password)
@@ -35,5 +37,11 @@ class CreateUser:
                 "Verify your email",
                 body
             )
-
+        #Send notification
+        notification_service = NotificationService(self.db)
+        notification_service.send_inapp_notification(
+            user_id=user.id,
+            title="Account Created",
+            message=f"Your account was created successfully by {current_user.full_name}"
+        )
         return user

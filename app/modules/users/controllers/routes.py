@@ -47,7 +47,8 @@ def create_user(
         user.password,
         user.full_name,
         user.roles,
-        background_tasks
+        background_tasks,
+        current_user
     )
 
     return APIResponse.success_response(created_user, "User created successfully")

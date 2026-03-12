@@ -5,6 +5,7 @@ from app.core.config import settings
 from app.modules.users.controllers.routes import router as users_router
 from app.modules.auth.controllers.routes import router as auth_router
 from app.modules.roles.controllers.routes import router as role_router
+from app.modules.notifications.controllers.routes import router as notification_router
 
 from app.core.middleware.activity_context import activity_context_middleware
 
@@ -44,6 +45,12 @@ def create_app() -> FastAPI:
         role_router,
         prefix="/api/v1/role",
         tags=["Permissions Management"],
+    )
+
+    app.include_router(
+        notification_router,
+        prefix="/api/v1/notifications",
+        tags=["Notifications"],
     )
 
     return app

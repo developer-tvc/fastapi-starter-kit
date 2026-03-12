@@ -21,6 +21,13 @@ class Settings(BaseSettings):
     LOGIN_MAX_ATTEMPTS:int
     LOGIN_LOCK_ENABLED:bool
     LOGIN_LOCK_MINUTES:int
+    EMAIL_NOTIFICATION_ENABLED: bool
+    SMS_NOTIFICATION_ENABLED: bool
+    WEBHOOK_NOTIFICATION_ENABLED: bool
+    IN_APP_NOTIFICATION_ENABLED: bool
+    SMS_PROVIDER: str = "mock"
+    SMS_API_KEY: str | None = None
+    SMS_SENDER_ID: str = "MyApp"
 
     model_config = SettingsConfigDict(
         env_file=".env",
