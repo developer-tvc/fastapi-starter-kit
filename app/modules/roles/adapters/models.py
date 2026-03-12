@@ -1,9 +1,9 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from app.core.database import Base
+from app.modules.activity_logs.audit_mixin import AuditModelMixin
 
-
-class UserRoleModel(Base):
+class UserRoleModel(AuditModelMixin, Base):
     __tablename__ = "user_roles"
 
     id = Column(Integer, primary_key=True)
@@ -14,7 +14,7 @@ class UserRoleModel(Base):
     user = relationship("UserModel", back_populates="roles")
     role = relationship("RoleModel")
 
-class RoleModel(Base):
+class RoleModel(AuditModelMixin, Base):
     __tablename__ = "roles"
 
     id = Column(Integer, primary_key=True)
@@ -24,7 +24,7 @@ class RoleModel(Base):
     permissions = relationship("RolePermissionModel", back_populates="role")
 
 
-class PermissionModel(Base):
+class PermissionModel(AuditModelMixin, Base):
     __tablename__ = "permissions"
 
     id = Column(Integer, primary_key=True)
@@ -33,7 +33,7 @@ class PermissionModel(Base):
     roles = relationship("RolePermissionModel", back_populates="permission")
 
 
-class RolePermissionModel(Base):
+class RolePermissionModel(AuditModelMixin, Base):
     __tablename__ = "role_permissions"
 
     id = Column(Integer, primary_key=True)

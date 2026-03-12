@@ -103,6 +103,11 @@ def get_current_user(
     if user is None:
         raise credentials_exception
 
+    # -----------------------------
+    # Store user in request context
+    # -----------------------------
+    db.info["current_user"] = user
+
     return user
 
 

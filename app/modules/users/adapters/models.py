@@ -2,8 +2,9 @@ from sqlalchemy import Column, Integer, String, Boolean
 from app.core.database import Base
 from sqlalchemy.orm import relationship
 from sqlalchemy import DateTime
+from app.modules.activity_logs.audit_mixin import AuditModelMixin
 
-class UserModel(Base):
+class UserModel(Base, AuditModelMixin):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
