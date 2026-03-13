@@ -18,6 +18,9 @@ from app.modules.auth.services.verify_user import VerifyUserService
 from app.core.security import verify_email_token
 from fastapi import HTTPException,Request
 from app.core.security import limiter
+from app.modules.auth.services.register_device import RegisterDeviceService
+from app.modules.auth.adapters.device_repository import DeviceRepository
+
 
 security = HTTPBearer()
 
@@ -34,11 +37,13 @@ async def login(
     db: Session = Depends(get_db)
 ):
     repo = SQLAlchemyUserRepository(db)
-    service = LoginUserService(repo)
-
+    device_repo = DeviceRepository(db) #Device Repository
+    register_device_service = RegisterDeviceService(device_repo) #Register Device Service
+    service = LoginUserService(repo,register_device_service)
     return await service.execute(
         email=body.email,
-        password=body.password
+        password=body.password,
+        request=request
     )
 
 

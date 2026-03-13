@@ -4,13 +4,14 @@ from fastapi import HTTPException
 from datetime import datetime, timedelta
 from app.modules.activity_logs.request_context import current_ip
 from app.core.config import settings
-
+from fastapi import Request
 class LoginUserService:
-    def __init__(self, user_repository: UserRepository):
+    def __init__(self, user_repository: UserRepository, register_device_service):
         self.user_repository = user_repository
         self.db = user_repository.db
+        self.register_device_service = register_device_service
 
-    async def execute(self, email: str, password: str):
+    async def execute(self, email: str, password: str,request:Request):
         user = self.user_repository.get_by_email(email)
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
@@ -61,8 +62,13 @@ class LoginUserService:
         refresh_token = create_refresh_token({"sub": str(user.id)})
         user.last_login_at = datetime.utcnow()
         user.ip_address = current_ip.get()
+
+        #Update last login and ip address
         self.user_repository.update_last_login(user.id, user.last_login_at)
         self.user_repository.update_ip_address(user.id, user.ip_address)
+        
+        #Register device
+        self.register_device_service.execute(user.id,request)
         
         return {
             "access_token": access_token,
