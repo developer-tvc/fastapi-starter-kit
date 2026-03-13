@@ -2,7 +2,9 @@ from app.modules.users.adapters.sqlalchemy_repository import SQLAlchemyUserRepos
 from app.core.security import create_password_reset_token
 from app.core.services.email_templates import password_reset_email
 from app.core.services.email_service import send_email
+from app.core.config import get_settings
 
+settings = get_settings()
 class ResetPasswordRequestService:
     def __init__(self, repo: SQLAlchemyUserRepository):
         self.repo = repo
@@ -17,7 +19,7 @@ class ResetPasswordRequestService:
 
             subject = "Password Reset Request"
 
-            body = password_reset_email(reset_link)
+            body = password_reset_email(reset_link,user.full_name,settings.PASSWORD_RESET_EXPIRE_MINUTES)
 
             background_tasks.add_task(
                 send_email,

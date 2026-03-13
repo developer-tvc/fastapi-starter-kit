@@ -28,7 +28,7 @@ class CreateUser:
 
             verify_link = f"http://localhost:3000/verify-email?token={token}"
 
-            body = email_verification_template(verify_link)
+            body = email_verification_template(verify_link,full_name,settings.ACCESS_TOKEN_EXPIRE_MINUTES)
             self.notification_service.send_email_notification(email, "Verify your email", body,background_tasks)
         
         self.notification_service.send_inapp_notification(

@@ -27,6 +27,8 @@ class Settings(BaseSettings):
     SMS_PROVIDER: str = "mock"
     SMS_API_KEY: str | None = None
     SMS_SENDER_ID: str = "MyApp"
+    MAX_WEBHOOK_RETRIES: int
+    WEBHOOK_RETRY_DELAY: int
 
     model_config = SettingsConfigDict(
         env_file=".env",

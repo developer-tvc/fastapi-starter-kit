@@ -11,9 +11,7 @@ from app.modules.auth.services.logout_user import LogoutUserService
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from app.modules.auth.adapters.blacklist_repository import BlacklistRepository
 from app.core.schemas.response import APIResponse
-from app.core.security import create_password_reset_token, verify_password_reset_token, hash_password
-from app.core.services.email_service import send_email
-from app.core.services.email_templates import password_reset_email
+from app.core.security import verify_password_reset_token, hash_password
 from app.modules.auth.services.reset_password_request import ResetPasswordRequestService
 from app.modules.auth.services.confirm_password_reset import ConfirmPasswordResetService
 from app.modules.auth.services.verify_user import VerifyUserService
