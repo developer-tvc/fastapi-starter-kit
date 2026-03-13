@@ -12,7 +12,8 @@ from app.core.schemas.response import APIResponse
 from app.modules.users.services.get_user import GetUser
 from app.modules.users.services.update_user import UpdateUser
 from app.modules.users.services.delete_user import DeleteUser
-
+from app.modules.notifications.repositories.notification_repository import NotificationRepository
+from app.modules.notifications.services.notification_service import NotificationService
 router = APIRouter(
     
     tags=["Users"],
@@ -40,8 +41,10 @@ def create_user(
     db: Session = Depends(get_db),  # Inject database session
     current_user: User = Depends(require_permission(constants.CREATE_PERMISSION))
 ):
-    repo = SQLAlchemyUserRepository(db)
-    use_case = CreateUser(repo)
+    repo = SQLAlchemyUserRepository(db) #User Repository
+    notification_repo = NotificationRepository(db) #Notification Repository
+    notification_service = NotificationService(notification_repo) #Notification Service
+    use_case = CreateUser(repo,notification_service) #Create User Use Case
     created_user = use_case.execute(
         user.email,
         user.password,

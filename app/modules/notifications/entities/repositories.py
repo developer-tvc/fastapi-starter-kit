@@ -6,5 +6,8 @@ class NotificationRepository(ABC):
     @abstractmethod
     def get_all(self, user_id: int) -> List[Notification]:
         pass
- 
+    
+    @abstractmethod
+    def create(self, user_id: int, title: str, message: str):
+        pass
     

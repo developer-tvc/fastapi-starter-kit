@@ -1,18 +1,16 @@
 from app.core.security import hash_password
 from app.core.config import get_settings
-from app.core.services.email_service import send_email
+from app.modules.notifications.services.notification_service import NotificationService
 from app.core.security import create_email_verification_token
 from app.core.services.email_templates import email_verification_template
-from app.modules.notifications.services.notification_service import NotificationService
-
 settings = get_settings()
 
 # Use case class responsible for creating a new user
 class CreateUser:
     # Initialize the use case with a user repository
-    def __init__(self, repo):
+    def __init__(self, repo,notification_service):
         self.repo = repo
-        self.db=repo.db
+        self.notification_service=notification_service
     # Execute the user creation process
     def execute(self, email: str, password: str, full_name: str, roles: list[int] = [], background_tasks = None, current_user = None):
         
@@ -22,26 +20,21 @@ class CreateUser:
         is_verified = not settings.EMAIL_VERIFICATION_ENABLED
         # Call the repository to create and store the new user
         user = self.repo.create_user(email, password_hash, full_name, roles, is_verified)
+
+        #Notification Service
         # send verification email
         if settings.EMAIL_VERIFICATION_ENABLED and background_tasks:
-
             token = create_email_verification_token(user.id)
 
             verify_link = f"http://localhost:3000/verify-email?token={token}"
 
             body = email_verification_template(verify_link)
-
-            background_tasks.add_task(
-                send_email,
-                user.email,
-                "Verify your email",
-                body
-            )
-        #Send notification
-        notification_service = NotificationService(self.db)
-        notification_service.send_inapp_notification(
-            user_id=user.id,
-            title="Account Created",
-            message=f"Your account was created successfully by {current_user.full_name}"
+            self.notification_service.send_email_notification(email, "Verify your email", body,background_tasks)
+        
+        self.notification_service.send_inapp_notification(
+            user.id,
+            "Account Created",
+            f"Your account was created successfully by {current_user.full_name}"
         )
+        
         return user

@@ -1,20 +1,21 @@
 from app.core.config import settings
 from app.core.services.email_service import send_email
-from app.modules.notifications.repositories.notification_repository import NotificationRepository
 from app.modules.notifications.services.sms_service import send_sms
 from app.modules.notifications.services.webhook_service import send_webhook
 
-
 class NotificationService:
 
-    def __init__(self, db):
-        self.db = db
-        self.repo = NotificationRepository(db)
+    def __init__(self, repo):
+        self.repo = repo
 
-    def send_email_notification(self, email, subject, message):
+    def send_email_notification(self, email, subject, message,background_tasks):  
 
-        if settings.EMAIL_NOTIFICATION_ENABLED:
-            send_email(email, subject, message)
+        background_tasks.add_task(
+            send_email,
+            email,
+            subject,
+            message
+        )
 
     def send_sms_notification(self, phone, message):
 
