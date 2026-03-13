@@ -6,6 +6,8 @@ from app.modules.activity_logs.request_context import current_ip
 from app.modules.activity_logs.serializer import serialize_model
 from app.modules.activity_logs.constants import LOG_DESCRIPTION
 from datetime import datetime
+from app.modules.activity_logs.constants import USER_TRACK_FIELD
+
 
 class AuditModelMixin:
 
@@ -55,14 +57,14 @@ class AuditModelMixin:
             new_values = {}
 
             for attr in state.attrs:
-
+                if attr.key not in USER_TRACK_FIELD:
+                    continue
                 hist = attr.history
-
                 if hist.has_changes():
 
                     old = hist.deleted[0] if hist.deleted else None
                     new = hist.added[0] if hist.added else getattr(target, attr.key)
-
+                    
                     if old != new:
 
                         if isinstance(old, datetime):

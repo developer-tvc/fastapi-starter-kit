@@ -5,3 +5,5 @@ LOG_DESCRIPTION = {
     "UserRoleModel": "user-role",
     "RolePermissionModel": "role-permission",
 }
+
+USER_TRACK_FIELD = ['full_name','email','phone','role_id','is_active','is_deleted']

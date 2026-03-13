@@ -8,7 +8,10 @@ from app.modules.roles.controllers.routes import router as role_router
 from app.modules.notifications.controllers.routes import router as notification_router
 
 from app.core.middleware.activity_context import activity_context_middleware
-
+from app.core.logging.middleware import CorrelationIdMiddleware
+from app.core.middleware.request_time_middleware import RequestTimeMiddleware
+from app.core.logging.error_middleware import ErrorMiddleware
+from app.modules.system.controllers.routes import router as system_router
 
 def create_app() -> FastAPI:
     app = FastAPI(
@@ -19,12 +22,26 @@ def create_app() -> FastAPI:
         redoc_url="/redoc",
         openapi_url="/openapi.json",
     )
+    # -----------------------------
+    # Logging Middleware
+    # -----------------------------
+    app.add_middleware(CorrelationIdMiddleware)
+
+    # -----------------------------
+    # Request Time Middleware
+    # -----------------------------
+    app.add_middleware(RequestTimeMiddleware)
 
     # -----------------------------
     # Activity Log Middleware
     # -----------------------------
     app.middleware("http")(activity_context_middleware)
 
+    # -----------------------------
+    # Error Middleware
+    # -----------------------------
+    app.add_middleware(ErrorMiddleware)
+    
     # -----------------------------
     # Routers
     # -----------------------------
@@ -51,6 +68,12 @@ def create_app() -> FastAPI:
         notification_router,
         prefix="/api/v1/notifications",
         tags=["Notifications"],
+    )
+
+    app.include_router(
+        system_router,
+        prefix="/api/v1/system",
+        tags=["System"],
     )
 
     return app
