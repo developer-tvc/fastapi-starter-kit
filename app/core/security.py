@@ -13,6 +13,8 @@ import uuid
 from app.modules.auth.adapters.blacklist_repository import BlacklistRepository
 from app.modules.roles.adapters.sqlalchemy_repository import SQLAlchemyRoleRepository
 from app.modules.roles.services.check_permission import CheckPermissionService
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
 SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = settings.ALGORITHM
@@ -22,6 +24,10 @@ REFRESH_TOKEN_EXPIRE_MINUTES = settings.REFRESH_TOKEN_EXPIRE_MINUTES
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=settings.SWAGGER_LOGIN)
+
+
+
+limiter = Limiter(key_func=get_remote_address)
 
 
 def hash_password(password: str) -> str:

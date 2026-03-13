@@ -16,7 +16,8 @@ from app.modules.auth.services.reset_password_request import ResetPasswordReques
 from app.modules.auth.services.confirm_password_reset import ConfirmPasswordResetService
 from app.modules.auth.services.verify_user import VerifyUserService
 from app.core.security import verify_email_token
-from fastapi import HTTPException
+from fastapi import HTTPException,Request
+from app.core.security import limiter
 
 security = HTTPBearer()
 
@@ -24,17 +25,20 @@ router = APIRouter(
     tags=["Auth"],
 )
 
+
 @router.post("/login")
+@limiter.limit("2/minute") #Rate Limiting
 async def login(
-    request: schemas.LoginRequest,
+    request: Request,
+    body: schemas.LoginRequest,
     db: Session = Depends(get_db)
 ):
     repo = SQLAlchemyUserRepository(db)
     service = LoginUserService(repo)
 
     return await service.execute(
-        email=request.email,
-        password=request.password
+        email=body.email,
+        password=body.password
     )
 
 

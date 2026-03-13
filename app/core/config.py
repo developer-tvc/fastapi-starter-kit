@@ -29,6 +29,9 @@ class Settings(BaseSettings):
     SMS_SENDER_ID: str = "MyApp"
     MAX_WEBHOOK_RETRIES: int
     WEBHOOK_RETRY_DELAY: int
+    CORS_ALLOWED_ORIGINS: list[str]
+    ALLOWED_IPS: list[str]
+    IP_WHITELIST_ENABLED: bool
 
     model_config = SettingsConfigDict(
         env_file=".env",

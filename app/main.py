@@ -1,17 +1,28 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 
 from app.core.config import settings
 
+# Routers
 from app.modules.users.controllers.routes import router as users_router
 from app.modules.auth.controllers.routes import router as auth_router
 from app.modules.roles.controllers.routes import router as role_router
 from app.modules.notifications.controllers.routes import router as notification_router
-
-from app.core.middleware.activity_context import activity_context_middleware
-from app.core.logging.middleware import CorrelationIdMiddleware
-from app.core.middleware.request_time_middleware import RequestTimeMiddleware
-from app.core.logging.error_middleware import ErrorMiddleware
 from app.modules.system.controllers.routes import router as system_router
+
+# Middleware
+from app.core.logging.middleware import CorrelationIdMiddleware
+from app.core.logging.error_middleware import ErrorMiddleware
+from app.core.middleware.request_time_middleware import RequestTimeMiddleware
+from app.core.middleware.activity_context import activity_context_middleware
+from app.core.middleware.cors_middleware import add_cors_middleware
+from app.core.middleware.security_headers_middleware import SecurityHeadersMiddleware
+from app.core.middleware.ip_whitelist_middleware import IPWhitelistMiddleware
+
+# Rate Limiting
+from slowapi.errors import RateLimitExceeded
+from slowapi import _rate_limit_exceeded_handler
+from app.core.security import limiter
+
 
 def create_app() -> FastAPI:
     app = FastAPI(
@@ -22,25 +33,36 @@ def create_app() -> FastAPI:
         redoc_url="/redoc",
         openapi_url="/openapi.json",
     )
-    # -----------------------------
-    # Logging Middleware
-    # -----------------------------
+    # --------------------------------------------------
+    # Rate Limiter Setup
+    # --------------------------------------------------
+    app.state.limiter = limiter
+    app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+    # --------------------------------------------------
+    # Middleware Order (Important)
+    # --------------------------------------------------
+
+    # 1. Global Error Handler
+    app.add_middleware(ErrorMiddleware)
+
+    # 2. IP security
+    app.add_middleware(IPWhitelistMiddleware)
+
+    # 3. Correlation ID
     app.add_middleware(CorrelationIdMiddleware)
 
-    # -----------------------------
-    # Request Time Middleware
-    # -----------------------------
+    # 4. Request Time Logging
     app.add_middleware(RequestTimeMiddleware)
 
-    # -----------------------------
-    # Activity Log Middleware
-    # -----------------------------
+    # 5. Security Headers
+    app.add_middleware(SecurityHeadersMiddleware)
+
+    # 6. Activity Logging Context
     app.middleware("http")(activity_context_middleware)
 
-    # -----------------------------
-    # Error Middleware
-    # -----------------------------
-    app.add_middleware(ErrorMiddleware)
+    # 7. CORS
+    add_cors_middleware(app)
     
     # -----------------------------
     # Routers
