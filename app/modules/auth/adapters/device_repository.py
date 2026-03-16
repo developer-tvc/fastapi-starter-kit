@@ -1,7 +1,8 @@
-from app.modules.auth.entities.repositories import DeviceRegisterRepository
-from app.modules.auth.adapters.models import UserDevice
 from sqlalchemy.orm import Session
+
+from app.modules.auth.adapters.models import UserDevice
 from app.modules.auth.entities.entities import UserDeviceEntity
+from app.modules.auth.entities.repositories import DeviceRegisterRepository
 
 
 class DeviceRepository(DeviceRegisterRepository):

@@ -1,10 +1,12 @@
-from app.modules.users.entities.repositories import UserRepository
-from app.core.security import create_access_token, create_refresh_token, verify_password
-from fastapi import HTTPException
 from datetime import datetime, timedelta
-from app.modules.activity_logs.request_context import current_ip
+
+from fastapi import HTTPException, Request
+
 from app.core.config import settings
-from fastapi import Request
+from app.core.security import (create_access_token, create_refresh_token,
+                               verify_password)
+from app.modules.activity_logs.request_context import current_ip
+from app.modules.users.entities.repositories import UserRepository
 
 
 class LoginUserService:

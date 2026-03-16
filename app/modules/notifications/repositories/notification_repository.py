@@ -1,7 +1,7 @@
-from app.modules.notifications.adapters.models import NotificationModel
-from app.modules.notifications.entities.repositories import NotificationRepository
-from app.modules.notifications.adapters.models import NotificationLogModel
-from app.modules.notifications.entities.repositories import NotificationLogRepository
+from app.modules.notifications.adapters.models import (NotificationLogModel,
+                                                       NotificationModel)
+from app.modules.notifications.entities.repositories import (
+    NotificationLogRepository, NotificationRepository)
 
 
 class NotificationRepository(NotificationRepository):

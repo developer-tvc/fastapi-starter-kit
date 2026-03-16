@@ -1,20 +1,22 @@
-from datetime import datetime, timedelta
-from jose import jwt
-from passlib.context import CryptContext
-from app.core.config import settings
-from fastapi.security import OAuth2PasswordBearer
-from fastapi import Depends, HTTPException, status
-from sqlalchemy.orm import Session
-from app.core.dependencies import get_db
-from app.modules.users.adapters.sqlalchemy_repository import SQLAlchemyUserRepository
-from jose import JWTError
-from fastapi.security import HTTPAuthorizationCredentials
 import uuid
-from app.modules.auth.adapters.blacklist_repository import BlacklistRepository
-from app.modules.roles.adapters.sqlalchemy_repository import SQLAlchemyRoleRepository
-from app.modules.roles.services.check_permission import CheckPermissionService
+from datetime import datetime, timedelta
+
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPAuthorizationCredentials, OAuth2PasswordBearer
+from jose import JWTError, jwt
+from passlib.context import CryptContext
 from slowapi import Limiter
 from slowapi.util import get_remote_address
+from sqlalchemy.orm import Session
+
+from app.core.config import settings
+from app.core.dependencies import get_db
+from app.modules.auth.adapters.blacklist_repository import BlacklistRepository
+from app.modules.roles.adapters.sqlalchemy_repository import \
+    SQLAlchemyRoleRepository
+from app.modules.roles.services.check_permission import CheckPermissionService
+from app.modules.users.adapters.sqlalchemy_repository import \
+    SQLAlchemyUserRepository
 
 SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = settings.ALGORITHM

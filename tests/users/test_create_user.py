@@ -1,6 +1,6 @@
 from app.modules.users.services.create_users import CreateUser
-from tests.users.fake_repository import FakeUserRepository
 from tests.users.fake_notification_service import FakeNotificationService
+from tests.users.fake_repository import FakeUserRepository
 
 
 def test_create_user():

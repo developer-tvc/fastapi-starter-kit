@@ -1,7 +1,8 @@
+import contextvars
 import uuid
+
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
-import contextvars
 
 correlation_id = contextvars.ContextVar("correlation_id", default=None)
 

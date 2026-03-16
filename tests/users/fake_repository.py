@@ -1,9 +1,10 @@
+from datetime import datetime
 from typing import List
 
+from app.modules.notifications.entities.repositories import \
+    NotificationRepository
 from app.modules.users.entities.entities import User
 from app.modules.users.entities.repositories import UserRepository
-from datetime import datetime
-from app.modules.notifications.entities.repositories import NotificationRepository
 
 
 class FakeUserRepository(UserRepository):

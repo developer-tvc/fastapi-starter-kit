@@ -1,6 +1,7 @@
 from fastapi import APIRouter
-from app.core.database import SessionLocal
 from sqlalchemy import text
+
+from app.core.database import SessionLocal
 
 router = APIRouter()
 

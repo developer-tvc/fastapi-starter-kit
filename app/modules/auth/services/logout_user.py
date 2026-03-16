@@ -1,6 +1,7 @@
-from jose import jwt
 from fastapi import HTTPException
-from app.core.security import SECRET_KEY, ALGORITHM
+from jose import jwt
+
+from app.core.security import ALGORITHM, SECRET_KEY
 from app.modules.auth.adapters.blacklist_repository import BlacklistRepository
 
 

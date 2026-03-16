@@ -1,21 +1,23 @@
-from app.modules.users.services.create_users import CreateUser
-from app.modules.users.controllers import schemas
-from app.modules.users.adapters.sqlalchemy_repository import SQLAlchemyUserRepository
-from app.modules.users.services.list_users import ListUsers
-from fastapi import APIRouter, Depends, BackgroundTasks
+from fastapi import APIRouter, BackgroundTasks, Depends
 from sqlalchemy.orm import Session
-from app.modules.users.entities.entities import User
+
 from app.core.dependencies import get_db
-from app.core.security import require_permission
-from app.modules.users import constants
 from app.core.schemas.response import APIResponse
-from app.modules.users.services.get_user import GetUser
-from app.modules.users.services.update_user import UpdateUser
+from app.core.security import require_permission
+from app.modules.notifications.repositories.notification_repository import \
+    NotificationRepository
+from app.modules.notifications.services.notification_service import \
+    NotificationService
+from app.modules.users import constants
+from app.modules.users.adapters.sqlalchemy_repository import \
+    SQLAlchemyUserRepository
+from app.modules.users.controllers import schemas
+from app.modules.users.entities.entities import User
+from app.modules.users.services.create_users import CreateUser
 from app.modules.users.services.delete_user import DeleteUser
-from app.modules.notifications.repositories.notification_repository import (
-    NotificationRepository,
-)
-from app.modules.notifications.services.notification_service import NotificationService
+from app.modules.users.services.get_user import GetUser
+from app.modules.users.services.list_users import ListUsers
+from app.modules.users.services.update_user import UpdateUser
 
 router = APIRouter(
     tags=["Users"],

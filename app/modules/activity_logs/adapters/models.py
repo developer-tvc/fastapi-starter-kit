@@ -1,6 +1,8 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, JSON
-from app.core.database import Base
 from datetime import datetime
+
+from sqlalchemy import JSON, Column, DateTime, ForeignKey, Integer, String
+
+from app.core.database import Base
 
 
 class ActivityLogModel(Base):

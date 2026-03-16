@@ -2,26 +2,25 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.core.dependencies import get_db
-from app.core.security import require_permission
 from app.core.schemas.response import APIResponse
+from app.core.security import require_permission
 from app.modules.roles import constants
-
+from app.modules.roles.adapters.sqlalchemy_repository import \
+    SQLAlchemyRoleRepository
 from app.modules.roles.controllers import schemas
-from app.modules.roles.adapters.sqlalchemy_repository import SQLAlchemyRoleRepository
-from app.modules.roles.services.create_permission import CreatePermission
-from app.modules.roles.services.list_permissions import ListPermissions
-from app.modules.roles.services.update_permissions import UpdatePermissions
-from app.modules.roles.services.delete_permission import DeletePermission
-from app.modules.roles.services.create_role import CreateRole
-from app.modules.roles.services.list_role import ListRoles
-from app.modules.roles.services.update_role import UpdateRole
-from app.modules.roles.services.delete_role import DeleteRole
 from app.modules.roles.services.assign_permission import AssignPermission
-from app.modules.roles.services.unassign_permission import UnassignPermission
-from app.modules.roles.services.get_user_permissions import GetUserPermissions
 from app.modules.roles.services.assign_role import AssignRole
+from app.modules.roles.services.create_permission import CreatePermission
+from app.modules.roles.services.create_role import CreateRole
+from app.modules.roles.services.delete_permission import DeletePermission
+from app.modules.roles.services.delete_role import DeleteRole
+from app.modules.roles.services.get_user_permissions import GetUserPermissions
+from app.modules.roles.services.list_permissions import ListPermissions
+from app.modules.roles.services.list_role import ListRoles
+from app.modules.roles.services.unassign_permission import UnassignPermission
 from app.modules.roles.services.unassign_role import UnassignRole
-
+from app.modules.roles.services.update_permissions import UpdatePermissions
+from app.modules.roles.services.update_role import UpdateRole
 
 router = APIRouter(
     tags=["Permissions Management"],

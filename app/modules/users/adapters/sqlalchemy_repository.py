@@ -1,9 +1,11 @@
-from sqlalchemy.orm import Session
-from app.modules.users.entities.repositories import UserRepository
-from app.modules.users.entities.entities import User
-from app.modules.users.adapters.models import UserModel
-from app.modules.roles.adapters.models import UserRoleModel
 from datetime import datetime
+
+from sqlalchemy.orm import Session
+
+from app.modules.roles.adapters.models import UserRoleModel
+from app.modules.users.adapters.models import UserModel
+from app.modules.users.entities.entities import User
+from app.modules.users.entities.repositories import UserRepository
 
 """ Implementation of UserRepository using SQLAlchemy
  Concrete implementation of the UserRepository interface
