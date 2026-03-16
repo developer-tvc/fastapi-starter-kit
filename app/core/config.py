@@ -32,6 +32,8 @@ class Settings(BaseSettings):
     CORS_ALLOWED_ORIGINS: list[str]
     ALLOWED_IPS: list[str]
     IP_WHITELIST_ENABLED: bool
+    PASSWORD_RESET_LINK: str
+    EMAIL_VERIFICATION_LINK: str
 
     model_config = SettingsConfigDict(
         env_file=".env",

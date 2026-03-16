@@ -15,7 +15,7 @@ class ResetPasswordRequestService:
         if user:
             token = create_password_reset_token(user.id)
 
-            reset_link = f"http://localhost:3000/reset-password?token={token}"
+            reset_link = f"{settings.PASSWORD_RESET_LINK}?token={token}"
 
             subject = "Password Reset Request"
 

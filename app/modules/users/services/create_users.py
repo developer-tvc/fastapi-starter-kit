@@ -26,7 +26,7 @@ class CreateUser:
         if settings.EMAIL_VERIFICATION_ENABLED and background_tasks:
             token = create_email_verification_token(user.id)
 
-            verify_link = f"http://localhost:3000/verify-email?token={token}"
+            verify_link = f"{settings.EMAIL_VERIFICATION_LINK}?token={token}"
 
             body = email_verification_template(verify_link,full_name,settings.ACCESS_TOKEN_EXPIRE_MINUTES)
             self.notification_service.send_email_notification(email, "Verify your email", body,background_tasks)
