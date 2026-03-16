@@ -31,10 +31,11 @@ class CreateUser:
             body = email_verification_template(verify_link,full_name,settings.ACCESS_TOKEN_EXPIRE_MINUTES)
             self.notification_service.send_email_notification(email, "Verify your email", body,background_tasks)
         
+        creator = current_user.full_name if current_user else "System"
         self.notification_service.send_inapp_notification(
             user.id,
             "Account Created",
-            f"Your account was created successfully by {current_user.full_name}"
+            f"Your account was created successfully by {creator}",
         )
         
         return user

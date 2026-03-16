@@ -34,6 +34,7 @@ class Settings(BaseSettings):
     IP_WHITELIST_ENABLED: bool
     PASSWORD_RESET_LINK: str
     EMAIL_VERIFICATION_LINK: str
+    ENVIRONMENT: str
 
     model_config = SettingsConfigDict(
         env_file=".env",

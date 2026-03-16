@@ -50,15 +50,15 @@ async def login(
 # OAuth2 login (Swagger)
 @router.post("/token")
 async def login_token(
+    request: Request,
     form_data: OAuth2PasswordRequestForm = Depends(),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     repo = SQLAlchemyUserRepository(db)
-    service = LoginUserService(repo)
+    service = LoginUserService(repo, None)
 
     return await service.execute(
-        email=form_data.username,
-        password=form_data.password
+        email=form_data.username, password=form_data.password, request=request
     )
 
 

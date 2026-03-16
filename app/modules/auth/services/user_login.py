@@ -67,8 +67,9 @@ class LoginUserService:
         self.user_repository.update_last_login(user.id, user.last_login_at)
         self.user_repository.update_ip_address(user.id, user.ip_address)
         
-        #Register device
-        self.register_device_service.execute(user.id,request)
+        # Register device
+        if self.register_device_service:
+            self.register_device_service.execute(user.id, request)
         
         return {
             "access_token": access_token,
