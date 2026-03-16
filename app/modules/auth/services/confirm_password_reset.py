@@ -1,4 +1,5 @@
-from app.modules.users.adapters.sqlalchemy_repository import SQLAlchemyUserRepository
+from app.modules.users.adapters.sqlalchemy_repository import \
+    SQLAlchemyUserRepository
 
 
 class ConfirmPasswordResetService:

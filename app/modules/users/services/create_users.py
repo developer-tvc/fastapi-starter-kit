@@ -1,7 +1,8 @@
 from app.core.config import get_settings
 from app.core.security import create_email_verification_token, hash_password
 from app.core.services.email_templates import email_verification_template
-from app.modules.notifications.services.notification_service import NotificationService
+from app.modules.notifications.services.notification_service import \
+    NotificationService
 
 settings = get_settings()
 

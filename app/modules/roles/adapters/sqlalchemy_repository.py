@@ -1,11 +1,8 @@
 from fastapi import HTTPException
 
-from app.modules.roles.adapters.models import (
-    PermissionModel,
-    RoleModel,
-    RolePermissionModel,
-    UserRoleModel,
-)
+from app.modules.roles.adapters.models import (PermissionModel, RoleModel,
+                                               RolePermissionModel,
+                                               UserRoleModel)
 from app.modules.roles.entities.repositories import RoleRepository
 
 
