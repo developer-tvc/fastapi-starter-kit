@@ -14,8 +14,7 @@ class IPWhitelistMiddleware(BaseHTTPMiddleware):
 
             if client_ip not in settings.ALLOWED_IPS:
                 return JSONResponse(
-                    status_code=403,
-                    content={"detail": "IP not allowed"}
+                    status_code=403, content={"detail": "IP not allowed"}
                 )
 
         return await call_next(request)

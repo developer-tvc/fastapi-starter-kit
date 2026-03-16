@@ -8,30 +8,53 @@ from datetime import datetime
 """ Implementation of UserRepository using SQLAlchemy
  Concrete implementation of the UserRepository interface
 """
+
+
 # Implementation of UserRepository using SQLAlchemy
-class  SQLAlchemyUserRepository(UserRepository):
+class SQLAlchemyUserRepository(UserRepository):
     # Initialize repository with database session
     def __init__(self, db: Session):
         self.db = db
+
     # Fetch all users from database
     def list_users(self):
         # Query all users from the users table
         users = self.db.query(UserModel).all()
-        
-        return [User(id=user.id, email=user.email, full_name=user.full_name, password_hash=user.password, is_active=user.is_active) for user in users]
+
+        return [
+            User(
+                id=user.id,
+                email=user.email,
+                full_name=user.full_name,
+                password_hash=user.password,
+                is_active=user.is_active,
+            )
+            for user in users
+        ]
+
     # Create a new user in the database
-    def create_user(self, email: str, password: str, full_name: str, roles: list[int] = [],is_verified: bool = False):
-        
-        new_user = UserModel(email=email, full_name=full_name, password=password, is_active=True, is_verified=is_verified)
+    def create_user(
+        self,
+        email: str,
+        password: str,
+        full_name: str,
+        roles: list[int] = [],
+        is_verified: bool = False,
+    ):
+
+        new_user = UserModel(
+            email=email,
+            full_name=full_name,
+            password=password,
+            is_active=True,
+            is_verified=is_verified,
+        )
         self.db.add(new_user)
         self.db.flush()
 
         # Assign roles
         for role_id in roles:
-            user_role = UserRoleModel(
-                user_id=new_user.id,
-                role_id=role_id
-            )
+            user_role = UserRoleModel(user_id=new_user.id, role_id=role_id)
             self.db.add(user_role)
         self.db.commit()
         self.db.refresh(new_user)
@@ -43,7 +66,7 @@ class  SQLAlchemyUserRepository(UserRepository):
             password_hash=new_user.password,
             is_active=new_user.is_active,
             roles=[role.role_id for role in new_user.roles],
-            is_verified=new_user.is_verified
+            is_verified=new_user.is_verified,
         )
 
     def get_by_email(self, email: str):
@@ -59,7 +82,7 @@ class  SQLAlchemyUserRepository(UserRepository):
             is_verified=user.is_verified,
             failed_login_attempts=user.failed_login_attempts,
             is_locked=user.is_locked,
-            locked_until=user.locked_until
+            locked_until=user.locked_until,
         )
 
     def get_by_id(self, user_id: int):
@@ -72,9 +95,9 @@ class  SQLAlchemyUserRepository(UserRepository):
             password_hash=user.password,
             full_name=user.full_name,
             is_active=user.is_active,
-            is_verified=user.is_verified
+            is_verified=user.is_verified,
         )
-    
+
     def update_password(self, user_id: int, password: str):
         user = self.db.query(UserModel).filter(UserModel.id == user_id).first()
         if not user:
@@ -88,8 +111,9 @@ class  SQLAlchemyUserRepository(UserRepository):
             password_hash=user.password,
             full_name=user.full_name,
             is_active=user.is_active,
-            is_verified=user.is_verified
+            is_verified=user.is_verified,
         )
+
     def verify_user(self, user_id: int):
         user = self.db.query(UserModel).filter(UserModel.id == user_id).first()
         if not user:
@@ -103,7 +127,7 @@ class  SQLAlchemyUserRepository(UserRepository):
             password_hash=user.password,
             full_name=user.full_name,
             is_active=user.is_active,
-            is_verified=user.is_verified
+            is_verified=user.is_verified,
         )
 
     def get_by_id(self, user_id: int):
@@ -116,9 +140,9 @@ class  SQLAlchemyUserRepository(UserRepository):
             password_hash=user.password,
             full_name=user.full_name,
             is_active=user.is_active,
-            is_verified=user.is_verified
+            is_verified=user.is_verified,
         )
-    
+
     def update(self, user_id: int, user: dict):
 
         user_obj = self.db.query(UserModel).filter(UserModel.id == user_id).first()
@@ -143,12 +167,7 @@ class  SQLAlchemyUserRepository(UserRepository):
 
             # insert new roles
             for role_id in roles:
-                self.db.add(
-                    UserRoleModel(
-                        user_id=user_id,
-                        role_id=role_id
-                    )
-                )
+                self.db.add(UserRoleModel(user_id=user_id, role_id=role_id))
 
         self.db.commit()
         self.db.refresh(user_obj)
@@ -160,9 +179,9 @@ class  SQLAlchemyUserRepository(UserRepository):
             full_name=user_obj.full_name,
             is_active=user_obj.is_active,
             is_verified=user_obj.is_verified,
-            roles=roles if roles else [r.role_id for r in user_obj.roles]
+            roles=roles if roles else [r.role_id for r in user_obj.roles],
         )
-    
+
     def delete(self, user_id: int) -> None:
         user = self.db.query(UserModel).filter(UserModel.id == user_id).first()
         if not user:
@@ -186,7 +205,7 @@ class  SQLAlchemyUserRepository(UserRepository):
             full_name=user.full_name,
             is_active=user.is_active,
             is_verified=user.is_verified,
-            last_login_at=user.last_login_at
+            last_login_at=user.last_login_at,
         )
 
     def update_ip_address(self, user_id: int, ip_address: str) -> None:
@@ -203,10 +222,12 @@ class  SQLAlchemyUserRepository(UserRepository):
             full_name=user.full_name,
             is_active=user.is_active,
             is_verified=user.is_verified,
-            ip_address=user.ip_address
+            ip_address=user.ip_address,
         )
 
-    def update_failed_login(self, user_id: int, is_locked: bool, locked_until: datetime) -> None:
+    def update_failed_login(
+        self, user_id: int, is_locked: bool, locked_until: datetime
+    ) -> None:
         user = self.db.query(UserModel).filter(UserModel.id == user_id).first()
 
         if not user:
@@ -225,10 +246,12 @@ class  SQLAlchemyUserRepository(UserRepository):
             is_active=user.is_active,
             is_verified=user.is_verified,
             is_locked=user.is_locked,
-            locked_until=user.locked_until
+            locked_until=user.locked_until,
         )
 
-    def update_failed_login_attempts(self, user_id: int, failed_login_attempts: int, attempt: bool) -> None:
+    def update_failed_login_attempts(
+        self, user_id: int, failed_login_attempts: int, attempt: bool
+    ) -> None:
         user = self.db.query(UserModel).filter(UserModel.id == user_id).first()
         if not user:
             return None
@@ -236,7 +259,6 @@ class  SQLAlchemyUserRepository(UserRepository):
             user.failed_login_attempts += 1
         else:
             user.failed_login_attempts = 0
-        
 
         self.db.commit()
         self.db.refresh(user)
@@ -247,5 +269,5 @@ class  SQLAlchemyUserRepository(UserRepository):
             full_name=user.full_name,
             is_active=user.is_active,
             is_verified=user.is_verified,
-            failed_login_attempts=user.failed_login_attempts
+            failed_login_attempts=user.failed_login_attempts,
         )

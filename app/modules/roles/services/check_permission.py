@@ -1,5 +1,6 @@
 from app.modules.roles.adapters.sqlalchemy_repository import SQLAlchemyRoleRepository
 
+
 class CheckPermissionService:
 
     def __init__(self, repo: SQLAlchemyRoleRepository):

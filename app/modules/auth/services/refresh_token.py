@@ -20,7 +20,4 @@ class RefreshTokenService:
 
         access_token = create_access_token({"sub": str(user_id)})
 
-        return {
-            "access_token": access_token,
-            "token_type": "bearer"
-        }
+        return {"access_token": access_token, "token_type": "bearer"}

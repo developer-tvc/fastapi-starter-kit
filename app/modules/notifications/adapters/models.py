@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime,ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey
 from datetime import datetime
 from app.db.base import Base
+
 
 class NotificationModel(Base):
 
@@ -12,7 +13,6 @@ class NotificationModel(Base):
     message = Column(String)
     is_read = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
-
 
 
 class NotificationLogModel(Base):
@@ -28,7 +28,7 @@ class NotificationLogModel(Base):
 
     channel = Column(String)  # email / sms / inapp / webhook
 
-    status = Column(String, default="pending")  
+    status = Column(String, default="pending")
     # pending | sent | failed
 
     error_message = Column(String, nullable=True)

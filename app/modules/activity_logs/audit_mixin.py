@@ -64,7 +64,7 @@ class AuditModelMixin:
 
                     old = hist.deleted[0] if hist.deleted else None
                     new = hist.added[0] if hist.added else getattr(target, attr.key)
-                    
+
                     if old != new:
 
                         if isinstance(old, datetime):

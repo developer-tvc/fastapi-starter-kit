@@ -1,5 +1,6 @@
 from app.modules.users.services.create_users import CreateUser
 from tests.users.fake_repository import FakeUserRepository
+from tests.users.fake_notification_service import FakeNotificationService
 
 
 def test_create_user():
@@ -8,12 +9,17 @@ def test_create_user():
     """
 
     repo = FakeUserRepository()
-    use_case = CreateUser(repo)
+
+    notification_service = FakeNotificationService()
+    use_case = CreateUser(repo, notification_service)
 
     user = use_case.execute(
         email="test@example.com",
         password="password123",
-        full_name="Test User"
+        full_name="Test User",
+        roles=[],
+        background_tasks=None,
+        current_user=None,
     )
 
     assert user.id == 1

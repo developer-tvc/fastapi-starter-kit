@@ -11,8 +11,4 @@ class APIResponse(BaseModel, Generic[T]):
 
     @staticmethod
     def success_response(data=None, message="Success"):
-        return APIResponse(
-            success=True,
-            message=message,
-            data=data
-        )
+        return APIResponse(success=True, message=message, data=data)

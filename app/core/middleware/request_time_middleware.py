@@ -28,8 +28,8 @@ class RequestTimeMiddleware(BaseHTTPMiddleware):
                 "path": request.url.path,
                 "status_code": response.status_code,
                 "process_time_ms": process_time_ms,
-                "client_ip": client_ip
-            }
+                "client_ip": client_ip,
+            },
         )
 
         response.headers["X-Process-Time"] = str(process_time_ms)

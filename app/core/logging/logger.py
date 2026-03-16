@@ -8,6 +8,7 @@ LOG_FILE = "logs/app.log"
 
 os.makedirs("logs", exist_ok=True)
 
+
 class JSONFormatter(logging.Formatter):
 
     def format(self, record):
@@ -24,7 +25,7 @@ class JSONFormatter(logging.Formatter):
 
         if hasattr(record, "correlation_id"):
             log_record["correlation_id"] = record.correlation_id
-        
+
         # Include extra fields
         if hasattr(record, "method"):
             log_record["method"] = record.method
@@ -52,12 +53,12 @@ def get_logger(name: str) -> logging.Logger:
     logger.setLevel(logging.INFO)
 
     if not logger.handlers:
-        
-        #for console output
+
+        # for console output
         handler = logging.StreamHandler()
         handler.setFormatter(JSONFormatter())
 
-        #for file output
+        # for file output
         file_handler = logging.FileHandler(LOG_FILE)
         file_handler.setFormatter(JSONFormatter())
 

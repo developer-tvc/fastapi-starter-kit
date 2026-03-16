@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 from app.core.database import Base
 from app.modules.activity_logs.audit_mixin import AuditModelMixin
 
+
 class UserRoleModel(AuditModelMixin, Base):
     __tablename__ = "user_roles"
 
@@ -13,6 +14,7 @@ class UserRoleModel(AuditModelMixin, Base):
 
     user = relationship("UserModel", back_populates="roles")
     role = relationship("RoleModel")
+
 
 class RoleModel(AuditModelMixin, Base):
     __tablename__ = "roles"

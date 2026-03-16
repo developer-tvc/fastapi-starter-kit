@@ -1,5 +1,6 @@
 from datetime import datetime
 
+
 class Notification:
     def __init__(self, id: int, user_id: int, title: str, message: str):
         self.id = id
@@ -9,7 +10,17 @@ class Notification:
 
 
 class NotificationLog:
-    def __init__(self, id: int, user_id: int, title: str, message: str, channel: str, status: str, error_message: str, created_at: datetime):
+    def __init__(
+        self,
+        id: int,
+        user_id: int,
+        title: str,
+        message: str,
+        channel: str,
+        status: str,
+        error_message: str,
+        created_at: datetime,
+    ):
         self.id = id
         self.user_id = user_id
         self.title = title

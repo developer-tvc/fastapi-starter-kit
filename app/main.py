@@ -63,7 +63,7 @@ def create_app() -> FastAPI:
 
     # 7. CORS
     add_cors_middleware(app)
-    
+
     # -----------------------------
     # Routers
     # -----------------------------

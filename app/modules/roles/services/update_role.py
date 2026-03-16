@@ -1,5 +1,6 @@
 from app.modules.roles.entities.repositories import RoleRepository
 
+
 class UpdateRole:
     def __init__(self, repo: RoleRepository):
         self.repo = repo

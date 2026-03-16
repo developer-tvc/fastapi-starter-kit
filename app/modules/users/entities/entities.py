@@ -1,7 +1,7 @@
 from datetime import datetime
 
-class User:
 
+class User:
     """
     Domain Entity representing a system user.
 
@@ -14,7 +14,21 @@ class User:
           at the boundaries (use-cases / services) before constructing the entity.
     """
 
-    def __init__(self, id: int, email: str, full_name: str, password_hash: str, is_active: bool = True, roles: list[int] = [], is_verified: bool = False, last_login_at: datetime = None, ip_address: str = None, failed_login_attempts: int = 0, is_locked: bool = False, locked_until: datetime = None):
+    def __init__(
+        self,
+        id: int,
+        email: str,
+        full_name: str,
+        password_hash: str,
+        is_active: bool = True,
+        roles: list[int] = [],
+        is_verified: bool = False,
+        last_login_at: datetime = None,
+        ip_address: str = None,
+        failed_login_attempts: int = 0,
+        is_locked: bool = False,
+        locked_until: datetime = None,
+    ):
         """
         Create a new User entity.
 
@@ -29,7 +43,9 @@ class User:
         self.id = id
         self.email = email
         self.full_name = full_name
-        self.password_hash = password_hash  # hash only; never store or accept plaintext here
+        self.password_hash = (
+            password_hash  # hash only; never store or accept plaintext here
+        )
         self.is_active = is_active
         self.roles = roles
         self.is_verified = is_verified
@@ -58,4 +74,3 @@ class User:
         """
         # Explicit state transition in the domain model.
         self.is_active = True
-    

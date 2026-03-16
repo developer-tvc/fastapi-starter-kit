@@ -1,4 +1,4 @@
-def password_reset_email(reset_link: str,full_name:str,expire_time:int) -> str:
+def password_reset_email(reset_link: str, full_name: str, expire_time: int) -> str:
     return f"""
         Hello {full_name},
 
@@ -16,7 +16,10 @@ def password_reset_email(reset_link: str,full_name:str,expire_time:int) -> str:
         Support Team
         """
 
-def email_verification_template(verify_link: str,full_name:str,expire_time:int) -> str:
+
+def email_verification_template(
+    verify_link: str, full_name: str, expire_time: int
+) -> str:
 
     return f"""
         Hello {full_name},

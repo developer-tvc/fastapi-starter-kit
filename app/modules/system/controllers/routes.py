@@ -17,16 +17,8 @@ def ready_check():
         db.execute(text("SELECT 1"))
         db.close()
 
-        return {
-            "status": "ready",
-            "database": "connected"
-        }
+        return {"status": "ready", "database": "connected"}
 
     except Exception:
 
-        return {
-            "status": "not_ready",
-            "database": "disconnected"
-        }
-
-
+        return {"status": "not_ready", "database": "disconnected"}
