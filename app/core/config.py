@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     SMTP_USERNAME:str
     SMTP_PASSWORD:str
     EMAIL_VERIFICATION_ENABLED: bool
+    EMAIL_SERVICE:bool
     LOGIN_MAX_ATTEMPTS:int
     LOGIN_LOCK_ENABLED:bool
     LOGIN_LOCK_MINUTES:int
@@ -35,6 +36,8 @@ class Settings(BaseSettings):
     PASSWORD_RESET_LINK: str
     EMAIL_VERIFICATION_LINK: str
     ENVIRONMENT: str
+    TESTING_EMAIL:list[str]
+    LIVE_MODE:bool
 
     model_config = SettingsConfigDict(
         env_file=".env",

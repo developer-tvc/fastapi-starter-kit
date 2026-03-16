@@ -23,13 +23,12 @@ class CreateUser:
 
         #Notification Service
         # send verification email
-        if settings.EMAIL_VERIFICATION_ENABLED and background_tasks:
-            token = create_email_verification_token(user.id)
+        token = create_email_verification_token(user.id)
 
-            verify_link = f"{settings.EMAIL_VERIFICATION_LINK}?token={token}"
+        verify_link = f"{settings.EMAIL_VERIFICATION_LINK}?token={token}"
 
-            body = email_verification_template(verify_link,full_name,settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-            self.notification_service.send_email_notification(email, "Verify your email", body,background_tasks)
+        body = email_verification_template(verify_link,full_name,settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+        self.notification_service.send_email_notification(email, "Verify your email", body,background_tasks)
         
         creator = current_user.full_name if current_user else "System"
         self.notification_service.send_inapp_notification(
