@@ -3,8 +3,7 @@ from datetime import datetime, timedelta
 from fastapi import HTTPException, Request
 
 from app.core.config import settings
-from app.core.security import (create_access_token, create_refresh_token,
-                               verify_password)
+from app.core.security import create_access_token, create_refresh_token, verify_password
 from app.modules.activity_logs.request_context import current_ip
 from app.modules.users.entities.repositories import UserRepository
 

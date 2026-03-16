@@ -1,27 +1,31 @@
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request
-from fastapi.security import (HTTPAuthorizationCredentials, HTTPBearer,
-                              OAuth2PasswordRequestForm)
+from fastapi.security import (
+    HTTPAuthorizationCredentials,
+    HTTPBearer,
+    OAuth2PasswordRequestForm,
+)
 from sqlalchemy.orm import Session
 
 from app.core.dependencies import get_db
 from app.core.schemas.response import APIResponse
-from app.core.security import (hash_password, limiter, verify_email_token,
-                               verify_password_reset_token)
+from app.core.security import (
+    hash_password,
+    limiter,
+    verify_email_token,
+    verify_password_reset_token,
+)
 from app.modules.auth.adapters.blacklist_repository import BlacklistRepository
 from app.modules.auth.adapters.device_repository import DeviceRepository
 from app.modules.auth.controllers import schemas
 from app.modules.auth.controllers.schemas import RefreshRequest
-from app.modules.auth.services.confirm_password_reset import \
-    ConfirmPasswordResetService
+from app.modules.auth.services.confirm_password_reset import ConfirmPasswordResetService
 from app.modules.auth.services.logout_user import LogoutUserService
 from app.modules.auth.services.refresh_token import RefreshTokenService
 from app.modules.auth.services.register_device import RegisterDeviceService
-from app.modules.auth.services.reset_password_request import \
-    ResetPasswordRequestService
+from app.modules.auth.services.reset_password_request import ResetPasswordRequestService
 from app.modules.auth.services.user_login import LoginUserService
 from app.modules.auth.services.verify_user import VerifyUserService
-from app.modules.users.adapters.sqlalchemy_repository import \
-    SQLAlchemyUserRepository
+from app.modules.users.adapters.sqlalchemy_repository import SQLAlchemyUserRepository
 
 security = HTTPBearer()
 

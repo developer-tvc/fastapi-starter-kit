@@ -1,5 +1,4 @@
-from app.modules.roles.adapters.sqlalchemy_repository import \
-    SQLAlchemyRoleRepository
+from app.modules.roles.adapters.sqlalchemy_repository import SQLAlchemyRoleRepository
 
 
 class CheckPermissionService:

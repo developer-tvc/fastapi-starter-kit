@@ -6,10 +6,10 @@ from app.core.schemas.response import APIResponse
 from app.core.security import require_permission
 from app.modules.notifications import constants
 from app.modules.notifications.controllers import schemas
-from app.modules.notifications.repositories.notification_repository import \
-    NotificationRepository
-from app.modules.notifications.services.list_notifications import \
-    ListNotifications
+from app.modules.notifications.repositories.notification_repository import (
+    NotificationRepository,
+)
+from app.modules.notifications.services.list_notifications import ListNotifications
 from app.modules.users.entities.entities import User
 
 router = APIRouter(

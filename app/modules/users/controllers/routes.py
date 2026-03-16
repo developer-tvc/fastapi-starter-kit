@@ -4,13 +4,12 @@ from sqlalchemy.orm import Session
 from app.core.dependencies import get_db
 from app.core.schemas.response import APIResponse
 from app.core.security import require_permission
-from app.modules.notifications.repositories.notification_repository import \
-    NotificationRepository
-from app.modules.notifications.services.notification_service import \
-    NotificationService
+from app.modules.notifications.repositories.notification_repository import (
+    NotificationRepository,
+)
+from app.modules.notifications.services.notification_service import NotificationService
 from app.modules.users import constants
-from app.modules.users.adapters.sqlalchemy_repository import \
-    SQLAlchemyUserRepository
+from app.modules.users.adapters.sqlalchemy_repository import SQLAlchemyUserRepository
 from app.modules.users.controllers import schemas
 from app.modules.users.entities.entities import User
 from app.modules.users.services.create_users import CreateUser
