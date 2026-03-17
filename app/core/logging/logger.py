@@ -1,8 +1,10 @@
+"""
+Logger is a class that is used to log messages.
+"""
 import os
 import logging
 import json
 from datetime import datetime
-from app.core.config import settings
 
 LOG_FILE = "logs/app.log"
 
@@ -10,9 +12,13 @@ os.makedirs("logs", exist_ok=True)
 
 
 class JSONFormatter(logging.Formatter):
-
+    """
+    JSONFormatter is a formatter that formats log records as JSON.
+    """
     def format(self, record):
-
+        """
+        Formats the log record as JSON.
+        """
         log_record = {
             "timestamp": datetime.fromtimestamp(record.created).isoformat(),
             "level": record.levelname,
@@ -46,7 +52,9 @@ class JSONFormatter(logging.Formatter):
 
 
 def get_logger(name: str) -> logging.Logger:
-
+    """
+    Returns a logger instance.
+    """
     logger = logging.getLogger(name)
 
     # Show INFO logs always (recommended for APIs)
