@@ -1,4 +1,6 @@
 from app.modules.roles.entities.repositories import RoleRepository
+
+
 class DeleteRole:
     def __init__(self, repo: RoleRepository):
         self.repo = repo

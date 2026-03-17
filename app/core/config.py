@@ -13,15 +13,15 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int
     REFRESH_TOKEN_EXPIRE_MINUTES: int
     SWAGGER_LOGIN: str | None = None
-    SMTP_SERVER:str
-    SMTP_PORT:int
-    SMTP_USERNAME:str
-    SMTP_PASSWORD:str
+    SMTP_SERVER: str
+    SMTP_PORT: int
+    SMTP_USERNAME: str
+    SMTP_PASSWORD: str
     EMAIL_VERIFICATION_ENABLED: bool
-    EMAIL_SERVICE:bool
-    LOGIN_MAX_ATTEMPTS:int
-    LOGIN_LOCK_ENABLED:bool
-    LOGIN_LOCK_MINUTES:int
+    EMAIL_SERVICE: bool
+    LOGIN_MAX_ATTEMPTS: int
+    LOGIN_LOCK_ENABLED: bool
+    LOGIN_LOCK_MINUTES: int
     SMS_NOTIFICATION_ENABLED: bool
     WEBHOOK_NOTIFICATION_ENABLED: bool
     IN_APP_NOTIFICATION_ENABLED: bool
@@ -36,8 +36,8 @@ class Settings(BaseSettings):
     PASSWORD_RESET_LINK: str
     EMAIL_VERIFICATION_LINK: str
     ENVIRONMENT: str
-    TESTING_EMAIL:list[str]
-    LIVE_MODE:bool
+    TESTING_EMAIL: list[str]
+    LIVE_MODE: bool
 
     model_config = SettingsConfigDict(
         env_file=".env",

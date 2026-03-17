@@ -1,6 +1,18 @@
-from fastapi import FastAPI
+"""
+FastAPI application entry point.
+"""
 
+# Standard library (none here)
+
+# Third-party
+from fastapi import FastAPI
+from slowapi.errors import RateLimitExceeded
+from slowapi import _rate_limit_exceeded_handler
+
+# First-party (your app)
 from app.core.config import settings
+from app.core.security import limiter
+from app.core.database import SessionLocal
 
 # Routers
 from app.modules.users.controllers.routes import router as users_router
@@ -18,18 +30,12 @@ from app.core.middleware.cors_middleware import add_cors_middleware
 from app.core.middleware.security_headers_middleware import SecurityHeadersMiddleware
 from app.core.middleware.ip_whitelist_middleware import IPWhitelistMiddleware
 
-# Rate Limiting
-from slowapi.errors import RateLimitExceeded
-from slowapi import _rate_limit_exceeded_handler
-from app.core.security import limiter
-
-# Test Data Generator
+# Services
 from app.core.services.test_data_generator import seed_test_data
-from app.core.database import SessionLocal
-
 
 
 def create_app() -> FastAPI:
+    """Create FastAPI application instance."""
     app = FastAPI(
         title=settings.APP_NAME,
         description=settings.DESCRIPTION,
@@ -39,11 +45,10 @@ def create_app() -> FastAPI:
         openapi_url="/openapi.json",
     )
 
-
     # Startup Event for Test Data Generation
     @app.on_event("startup")
     def startup_event():
-
+        """Initialize application on startup (seed test data in sandbox)."""
         if settings.ENVIRONMENT == "sandbox":
             db = SessionLocal()
             seed_test_data(db)
@@ -79,7 +84,7 @@ def create_app() -> FastAPI:
 
     # 7. CORS
     add_cors_middleware(app)
-    
+
     # -----------------------------
     # Routers
     # -----------------------------

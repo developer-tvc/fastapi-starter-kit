@@ -14,8 +14,6 @@ class BlacklistRepository:
     def exists(self, jti: str):
 
         return (
-            self.db.query(BlacklistedToken)
-            .filter(BlacklistedToken.jti == jti)
-            .first()
+            self.db.query(BlacklistedToken).filter(BlacklistedToken.jti == jti).first()
             is not None
         )

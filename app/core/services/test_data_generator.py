@@ -16,18 +16,19 @@ def generate_users(db, count: int = 10):
     users = []
 
     for _ in range(count):
-        
+
         user = UserModel(
             email=fake.unique.email(),
             password=hash_password("Password@123"),
             full_name=fake.name(),
-            is_verified=True
+            is_verified=True,
         )
         db.add(user)
         users.append(user)
         logger.info(f"Created: {user.email}")
     db.commit()
     return users
+
 
 def generate_roles(db):
 
@@ -37,16 +38,17 @@ def generate_roles(db):
         existing = db.query(RoleModel).filter_by(name=role_name["name"]).first()
         if existing:
             logger.info(f"{role_name['name']} exists")
-            continue    
+            continue
         role = RoleModel(
             name=role_name["name"],
-            description=role_name['description'],
+            description=role_name["description"],
         )
         db.add(role)
         roles.append(role)
         logger.info(f"Created: {role.name}")
     db.commit()
     return roles
+
 
 def generate_permissions(db):
 

@@ -4,6 +4,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import DateTime
 from app.modules.activity_logs.audit_mixin import AuditModelMixin
 
+
 class UserModel(Base, AuditModelMixin):
     __tablename__ = "users"
 
@@ -15,7 +16,9 @@ class UserModel(Base, AuditModelMixin):
     phone = Column(String, nullable=True)
     profile_picture = Column(String, nullable=True)
     is_verified = Column(Boolean, default=False)
-    roles = relationship("UserRoleModel", back_populates="user",cascade="all, delete-orphan")
+    roles = relationship(
+        "UserRoleModel", back_populates="user", cascade="all, delete-orphan"
+    )
     is_deleted = Column(Boolean, default=False)
     deleted_at = Column(DateTime, nullable=True)
     last_login_at = Column(DateTime, nullable=True)
@@ -23,4 +26,4 @@ class UserModel(Base, AuditModelMixin):
     is_locked = Column(Boolean, default=False)
     locked_until = Column(DateTime, nullable=True)
     last_failed_login_at = Column(DateTime, nullable=True)
-    ip_address = Column(String, nullable=True)    
+    ip_address = Column(String, nullable=True)

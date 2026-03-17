@@ -1,20 +1,23 @@
-from datetime import datetime, timedelta
-from jose import jwt
-from passlib.context import CryptContext
-from app.core.config import settings
-from fastapi.security import OAuth2PasswordBearer
-from fastapi import Depends, HTTPException, status
-from sqlalchemy.orm import Session
-from app.core.dependencies import get_db
-from app.modules.users.adapters.sqlalchemy_repository import SQLAlchemyUserRepository
-from jose import JWTError
-from fastapi.security import HTTPAuthorizationCredentials
+# Standard library
 import uuid
+from datetime import datetime, timedelta
+
+# Third-party
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
+from jose import JWTError, jwt
+from passlib.context import CryptContext
+from slowapi import Limiter
+from slowapi.util import get_remote_address
+from sqlalchemy.orm import Session
+
+# First-party (your app)
+from app.core.config import settings
+from app.core.dependencies import get_db
 from app.modules.auth.adapters.blacklist_repository import BlacklistRepository
 from app.modules.roles.adapters.sqlalchemy_repository import SQLAlchemyRoleRepository
 from app.modules.roles.services.check_permission import CheckPermissionService
-from slowapi import Limiter
-from slowapi.util import get_remote_address
+from app.modules.users.adapters.sqlalchemy_repository import SQLAlchemyUserRepository
 
 SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = settings.ALGORITHM
@@ -26,7 +29,6 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=settings.SWAGGER_LOGIN)
 
 
-
 limiter = Limiter(key_func=get_remote_address)
 
 
@@ -35,27 +37,22 @@ def hash_password(password: str) -> str:
     return pwd_context.hash(password)
 
 
-
 def verify_password(plain, hashed):
     """Verify that a given plaintext password matches a hashed password."""
     return pwd_context.verify(plain, hashed)
 
 
-
 def create_access_token(data: dict):
     """Create a JWT access token."""
-    
+
     expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
 
     to_encode = data.copy()
 
-    to_encode.update({
-        "exp": expire,
-        "type": "access",
-        "jti": str(uuid.uuid4())
-    })
+    to_encode.update({"exp": expire, "type": "access", "jti": str(uuid.uuid4())})
 
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
 
 def create_refresh_token(data: dict):
     """Create a JWT refresh token."""
@@ -64,11 +61,7 @@ def create_refresh_token(data: dict):
 
     to_encode = data.copy()
 
-    to_encode.update({
-        "exp": expire,
-        "type": "refresh",
-        "jti": str(uuid.uuid4())
-    })
+    to_encode.update({"exp": expire, "type": "refresh", "jti": str(uuid.uuid4())})
 
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
@@ -77,7 +70,7 @@ def get_current_user(
     token: str = Depends(oauth2_scheme),
     db: Session = Depends(get_db),
 ):
-
+    """Get current user from JWT token."""
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -100,8 +93,8 @@ def get_current_user(
         if user_id is None:
             raise credentials_exception
 
-    except JWTError:
-        raise credentials_exception
+    except JWTError as exc:
+        raise credentials_exception from exc
 
     repo = SQLAlchemyUserRepository(db)
     user = repo.get_by_id(user_id)
@@ -118,10 +111,9 @@ def get_current_user(
 
 
 def verify_refresh_token(refresh_token: str):
-
+    """Verify refresh token."""
     credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Invalid refresh token"
+        status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid refresh token"
     )
 
     try:
@@ -132,16 +124,14 @@ def verify_refresh_token(refresh_token: str):
 
         return payload["sub"]
 
-    except JWTError:
-        raise credentials_exception
-
+    except JWTError as exc:
+        raise credentials_exception from exc
 
 
 def require_permission(permission: str):
-
+    """Require permission for a specific action."""
     def permission_checker(
-        current_user = Depends(get_current_user),
-        db: Session = Depends(get_db)
+        current_user=Depends(get_current_user), db: Session = Depends(get_db)
     ):
 
         repo = SQLAlchemyRoleRepository(db)
@@ -150,33 +140,23 @@ def require_permission(permission: str):
         allowed = service.execute(current_user.id, permission)
 
         if not allowed:
-            raise HTTPException(
-                status_code=403,
-                detail="Permission denied"
-            )
+            raise HTTPException(status_code=403, detail="Permission denied")
         return current_user
 
     return permission_checker
 
 
-
-
 def create_password_reset_token(user_id: int):
-
+    """Create password reset token."""
     expire = datetime.utcnow() + timedelta(minutes=30)
 
-    payload = {
-        "sub": str(user_id),
-        "type": "password_reset",
-        "exp": expire
-    }
+    payload = {"sub": str(user_id), "type": "password_reset", "exp": expire}
 
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
 
-
 def verify_password_reset_token(token: str):
-
+    """Verify password reset token."""
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
 
@@ -190,28 +170,23 @@ def verify_password_reset_token(token: str):
 
 
 def create_email_verification_token(user_id: int):
-
+    """Create email verification token."""
     payload = {
         "sub": str(user_id),
         "type": "email_verification",
-        "exp": datetime.utcnow() + timedelta(hours=24)
+        "exp": datetime.utcnow() + timedelta(hours=24),
     }
 
-    token = jwt.encode(
-        payload,
-        SECRET_KEY,
-        algorithm=ALGORITHM
-    )
+    token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
     return token
 
-def verify_email_token(token: str):
 
+def verify_email_token(token: str):
+    """Verify email verification token."""
     try:
         payload = jwt.decode(
-            token,
-            settings.SECRET_KEY,
-            algorithms=[settings.ALGORITHM]
+            token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
         )
 
         if payload.get("type") != "email_verification":

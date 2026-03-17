@@ -1,6 +1,7 @@
 from fastapi import Request
 from app.modules.activity_logs.request_context import current_ip
 
+
 async def activity_context_middleware(request: Request, call_next):
 
     if request.client:

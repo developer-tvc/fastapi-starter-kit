@@ -16,8 +16,7 @@ class ErrorMiddleware(BaseHTTPMiddleware):
         except HTTPException as exc:
             # Allow FastAPI HTTP errors to pass through
             return JSONResponse(
-                status_code=exc.status_code,
-                content={"detail": exc.detail}
+                status_code=exc.status_code, content={"detail": exc.detail}
             )
 
         except Exception as e:
@@ -25,6 +24,5 @@ class ErrorMiddleware(BaseHTTPMiddleware):
             logger.error(f"Unhandled error: {str(e)}")
 
             return JSONResponse(
-                status_code=500,
-                content={"detail": "Internal server error"}
+                status_code=500, content={"detail": "Internal server error"}
             )
