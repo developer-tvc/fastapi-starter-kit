@@ -23,6 +23,11 @@ from slowapi.errors import RateLimitExceeded
 from slowapi import _rate_limit_exceeded_handler
 from app.core.security import limiter
 
+# Test Data Generator
+from app.core.services.test_data_generator import seed_test_data
+from app.core.database import SessionLocal
+
+
 
 def create_app() -> FastAPI:
     app = FastAPI(
@@ -33,6 +38,17 @@ def create_app() -> FastAPI:
         redoc_url="/redoc",
         openapi_url="/openapi.json",
     )
+
+
+    # Startup Event for Test Data Generation
+    @app.on_event("startup")
+    def startup_event():
+
+        if settings.ENVIRONMENT == "sandbox":
+            db = SessionLocal()
+            seed_test_data(db)
+            db.close()
+
     # --------------------------------------------------
     # Rate Limiter Setup
     # --------------------------------------------------
