@@ -18,6 +18,6 @@ class LogoutUserService:
         if not jti:
             raise HTTPException(status_code=400, detail="Invalid token")
 
-        self.blacklist_repo.add(jti)
+        await self.blacklist_repo.add(jti)
 
         return {"message": "Successfully logged out"}

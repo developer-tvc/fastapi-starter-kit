@@ -11,8 +11,8 @@ class ResetPasswordRequestService:
     def __init__(self, repo: SQLAlchemyUserRepository):
         self.repo = repo
 
-    def execute(self, payload, background_tasks):
-        user = self.repo.get_by_email(payload.email)
+    async def execute(self, payload, background_tasks):
+        user = await self.repo.get_by_email(payload.email)
 
         if user:
             token = create_password_reset_token(user.id)

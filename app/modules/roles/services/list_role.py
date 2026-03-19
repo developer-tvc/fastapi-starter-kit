@@ -5,5 +5,5 @@ class ListRoles:
     def __init__(self, repo: RoleRepository):
         self.repo = repo
 
-    def execute(self):
-        return self.repo.list_roles()
+    async def execute(self):
+        return await self.repo.list_roles()

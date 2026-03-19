@@ -4,7 +4,7 @@ from app.modules.auth.entities.entities import UserDeviceEntity
 
 class DeviceRegisterRepository(ABC):
     @abstractmethod
-    def create(
+    async def create(
         self,
         user_id: int,
         device_id: str,

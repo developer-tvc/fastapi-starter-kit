@@ -3,10 +3,10 @@ class UpdateUser:
     def __init__(self, repo):
         self.repo = repo
 
-    def execute(self, user_id: int, user: dict):
+    async def execute(self, user_id: int, user: dict):
         # Check if user exists first
-        existing_user = self.repo.get_by_id(user_id)
+        existing_user = await self.repo.get_by_id(user_id)
         if not existing_user:
             raise UserNotFound(f"User with id {user_id} does not exist")
         user_data = user.model_dump(exclude_unset=True)
-        return self.repo.update(user_id, user_data)
+        return await self.repo.update(user_id, user_data)

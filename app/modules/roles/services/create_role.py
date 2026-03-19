@@ -5,5 +5,5 @@ class CreateRole:
     def __init__(self, repo: RoleRepository):
         self.repo = repo
 
-    def execute(self, name: str, description: str | None = None):
-        return self.repo.create_role(name, description)
+    async def execute(self, name: str, description: str | None = None):
+        return await self.repo.create_role(name, description)

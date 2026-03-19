@@ -3,5 +3,5 @@ class ListPermissions:
     def __init__(self, repo):
         self.repo = repo
 
-    def execute(self):
-        return self.repo.list_permissions()
+    async def execute(self):
+        return await self.repo.list_permissions()

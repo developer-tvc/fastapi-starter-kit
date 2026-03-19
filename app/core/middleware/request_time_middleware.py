@@ -8,11 +8,9 @@ logger = get_logger(__name__)
 class RequestTimeMiddleware(BaseHTTPMiddleware):
 
     async def dispatch(self, request, call_next):
-
         start_time = time.time()
 
         response = await call_next(request)
-
         process_time_ms = round((time.time() - start_time) * 1000, 2)
 
         client_ip = request.headers.get("x-forwarded-for")

@@ -5,6 +5,6 @@ class ListUsers:
         self.repo = repo
 
     # Execute the use case
-    def execute(self):
+    async def execute(self):
         # Call the repository to fetch all users
-        return self.repo.list_users()
+        return await self.repo.list_users()

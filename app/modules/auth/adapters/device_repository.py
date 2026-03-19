@@ -1,19 +1,19 @@
 from app.modules.auth.entities.repositories import DeviceRegisterRepository
 from app.modules.auth.adapters.models import UserDevice
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from app.modules.auth.entities.entities import UserDeviceEntity
+from sqlalchemy import select
 
 
 class DeviceRepository(DeviceRegisterRepository):
-    def __init__(self, db: Session):
+    def __init__(self, db: AsyncSession):
         self.db = db
 
-    def get_by_device_id(self, device_id):
-        return (
-            self.db.query(UserDevice).filter(UserDevice.device_id == device_id).first()
-        )
+    async def get_by_device_id(self, device_id):
+        result = await self.db.execute(select(UserDevice).filter(UserDevice.device_id == device_id))
+        return result.scalar_one_or_none()
 
-    def create(
+    async def create(
         self,
         user_id: int,
         device_id: str,
@@ -29,6 +29,6 @@ class DeviceRepository(DeviceRegisterRepository):
             ip_address=ip_address,
         )
         self.db.add(device)
-        self.db.commit()
-        self.db.refresh(device)
+        await self.db.commit()
+        await self.db.refresh(device)
         return device

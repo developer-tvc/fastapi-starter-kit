@@ -4,6 +4,8 @@ from app.modules.users.entities.entities import User
 from app.modules.users.adapters.models import UserModel
 from app.modules.roles.adapters.models import UserRoleModel
 from datetime import datetime
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 
 """ Implementation of UserRepository using SQLAlchemy
  Concrete implementation of the UserRepository interface
@@ -13,14 +15,16 @@ from datetime import datetime
 # Implementation of UserRepository using SQLAlchemy
 class SQLAlchemyUserRepository(UserRepository):
     # Initialize repository with database session
-    def __init__(self, db: Session):
+    def __init__(self, db: AsyncSession):
         self.db = db
 
     # Fetch all users from database
-    def list_users(self):
-        # Query all users from the users table
-        users = self.db.query(UserModel).all()
-
+    
+    async def list_users(self) -> list[User]:
+        # Execute the select query asynchronously
+        result = await self.db.execute(select(UserModel))
+        users = result.scalars().all()  # this returns a list of UserModel
+        # Convert DB models to domain entities
         return [
             User(
                 id=user.id,
@@ -28,12 +32,13 @@ class SQLAlchemyUserRepository(UserRepository):
                 full_name=user.full_name,
                 password_hash=user.password,
                 is_active=user.is_active,
+                is_verified=user.is_verified,
             )
             for user in users
         ]
 
     # Create a new user in the database
-    def create_user(
+    async def create_user(
         self,
         email: str,
         password: str,
@@ -50,14 +55,14 @@ class SQLAlchemyUserRepository(UserRepository):
             is_verified=is_verified,
         )
         self.db.add(new_user)
-        self.db.flush()
+        await self.db.flush()
 
         # Assign roles
         for role_id in roles:
             user_role = UserRoleModel(user_id=new_user.id, role_id=role_id)
             self.db.add(user_role)
-        self.db.commit()
-        self.db.refresh(new_user)
+        await self.db.commit()
+        await self.db.refresh(new_user)
 
         return User(
             id=new_user.id,
@@ -65,12 +70,13 @@ class SQLAlchemyUserRepository(UserRepository):
             full_name=new_user.full_name,
             password_hash=new_user.password,
             is_active=new_user.is_active,
-            roles=[role.role_id for role in new_user.roles],
+            roles=roles,
             is_verified=new_user.is_verified,
         )
 
-    def get_by_email(self, email: str):
-        user = self.db.query(UserModel).filter(UserModel.email == email).first()
+    async def get_by_email(self, email: str):
+        user = await self.db.execute(select(UserModel).where(UserModel.email == email))
+        user = user.scalar_one_or_none()
         if not user:
             return None
         return User(
@@ -85,8 +91,9 @@ class SQLAlchemyUserRepository(UserRepository):
             locked_until=user.locked_until,
         )
 
-    def get_by_id(self, user_id: int):
-        user = self.db.query(UserModel).filter(UserModel.id == user_id).first()
+    async def get_by_id(self, user_id: int):
+        user = await self.db.execute(select(UserModel).where(UserModel.id == user_id))
+        user = user.scalar_one_or_none()
         if not user:
             return None
         return User(
@@ -98,13 +105,14 @@ class SQLAlchemyUserRepository(UserRepository):
             is_verified=user.is_verified,
         )
 
-    def update_password(self, user_id: int, password: str):
-        user = self.db.query(UserModel).filter(UserModel.id == user_id).first()
+    async def update_password(self, user_id: int, password: str):
+        user = await self.db.execute(select(UserModel).where(UserModel.id == user_id))
+        user = user.scalar_one_or_none()
         if not user:
             return None
         user.password = password
-        self.db.commit()
-        self.db.refresh(user)
+        await self.db.commit()
+        await self.db.refresh(user)
         return User(
             id=user.id,
             email=user.email,
@@ -114,13 +122,14 @@ class SQLAlchemyUserRepository(UserRepository):
             is_verified=user.is_verified,
         )
 
-    def verify_user(self, user_id: int):
-        user = self.db.query(UserModel).filter(UserModel.id == user_id).first()
+    async def verify_user(self, user_id: int):
+        user = await self.db.execute(select(UserModel).where(UserModel.id == user_id))
+        user = user.scalar_one_or_none()
         if not user:
             return None
         user.is_verified = True
-        self.db.commit()
-        self.db.refresh(user)
+        await self.db.commit()
+        await self.db.refresh(user)
         return User(
             id=user.id,
             email=user.email,
@@ -130,8 +139,9 @@ class SQLAlchemyUserRepository(UserRepository):
             is_verified=user.is_verified,
         )
 
-    def get_by_id(self, user_id: int):
-        user = self.db.query(UserModel).filter(UserModel.id == user_id).first()
+    async def get_by_id(self, user_id: int):
+        user = await self.db.execute(select(UserModel).where(UserModel.id == user_id))
+        user = user.scalar_one_or_none()
         if not user:
             return None
         return User(
@@ -143,10 +153,10 @@ class SQLAlchemyUserRepository(UserRepository):
             is_verified=user.is_verified,
         )
 
-    def update(self, user_id: int, user: dict):
+    async def update(self, user_id: int, user: dict):
 
-        user_obj = self.db.query(UserModel).filter(UserModel.id == user_id).first()
-
+        user_obj = await self.db.execute(select(UserModel).where(UserModel.id == user_id))
+        user_obj = user_obj.scalar_one_or_none()
         if not user_obj:
             return None
 
@@ -161,16 +171,18 @@ class SQLAlchemyUserRepository(UserRepository):
         if roles is not None:
 
             # remove existing roles
-            self.db.query(UserRoleModel).filter(
-                UserRoleModel.user_id == user_id
-            ).delete()
+            await self.db.execute(select(UserRoleModel).where(UserRoleModel.user_id == user_id))
 
             # insert new roles
             for role_id in roles:
                 self.db.add(UserRoleModel(user_id=user_id, role_id=role_id))
 
-        self.db.commit()
-        self.db.refresh(user_obj)
+        await self.db.commit()
+        await self.db.refresh(user_obj)
+
+        if roles is None:
+            roles_result = await self.db.execute(select(UserRoleModel.role_id).where(UserRoleModel.user_id == user_id))
+            roles = roles_result.scalars().all()
 
         return User(
             id=user_obj.id,
@@ -179,25 +191,26 @@ class SQLAlchemyUserRepository(UserRepository):
             full_name=user_obj.full_name,
             is_active=user_obj.is_active,
             is_verified=user_obj.is_verified,
-            roles=roles if roles else [r.role_id for r in user_obj.roles],
+            roles=roles,
         )
 
-    def delete(self, user_id: int) -> None:
-        user = self.db.query(UserModel).filter(UserModel.id == user_id).first()
+    async def delete(self, user_id: int) -> None:
+        user = await self.db.execute(select(UserModel).where(UserModel.id == user_id))
+        user = user.scalar_one_or_none()
         if not user:
             return None
         user.is_deleted = True
         user.deleted_at = datetime.utcnow()
+        await self.db.commit()
 
-        self.db.commit()
-
-    def update_last_login(self, user_id: int, last_login_at: datetime) -> None:
-        user = self.db.query(UserModel).filter(UserModel.id == user_id).first()
+    async def update_last_login(self, user_id: int, last_login_at: datetime) -> None:
+        user = await self.db.execute(select(UserModel).where(UserModel.id == user_id))
+        user = user.scalar_one_or_none()
         if not user:
             return None
         user.last_login_at = last_login_at
-        self.db.commit()
-        self.db.refresh(user)
+        await self.db.commit()
+        await self.db.refresh(user)
         return User(
             id=user.id,
             email=user.email,
@@ -208,13 +221,14 @@ class SQLAlchemyUserRepository(UserRepository):
             last_login_at=user.last_login_at,
         )
 
-    def update_ip_address(self, user_id: int, ip_address: str) -> None:
-        user = self.db.query(UserModel).filter(UserModel.id == user_id).first()
+    async def update_ip_address(self, user_id: int, ip_address: str) -> None:
+        user = await self.db.execute(select(UserModel).where(UserModel.id == user_id))
+        user = user.scalar_one_or_none()
         if not user:
             return None
         user.ip_address = ip_address
-        self.db.commit()
-        self.db.refresh(user)
+        await self.db.commit()
+        await self.db.refresh(user)
         return User(
             id=user.id,
             email=user.email,
@@ -225,19 +239,19 @@ class SQLAlchemyUserRepository(UserRepository):
             ip_address=user.ip_address,
         )
 
-    def update_failed_login(
+    async def update_failed_login(
         self, user_id: int, is_locked: bool, locked_until: datetime
     ) -> None:
-        user = self.db.query(UserModel).filter(UserModel.id == user_id).first()
-
+        user = await self.db.execute(select(UserModel).where(UserModel.id == user_id))
+        user = user.scalar_one_or_none()
         if not user:
             return None
 
         user.is_locked = is_locked
         user.locked_until = locked_until
 
-        self.db.commit()
-        self.db.refresh(user)
+        await self.db.commit()
+        await self.db.refresh(user)
         return User(
             id=user.id,
             email=user.email,
@@ -249,10 +263,11 @@ class SQLAlchemyUserRepository(UserRepository):
             locked_until=user.locked_until,
         )
 
-    def update_failed_login_attempts(
+    async def update_failed_login_attempts(
         self, user_id: int, failed_login_attempts: int, attempt: bool
     ) -> None:
-        user = self.db.query(UserModel).filter(UserModel.id == user_id).first()
+        user = await self.db.execute(select(UserModel).where(UserModel.id == user_id))
+        user = user.scalar_one_or_none()
         if not user:
             return None
         if not attempt:
@@ -260,8 +275,8 @@ class SQLAlchemyUserRepository(UserRepository):
         else:
             user.failed_login_attempts = 0
 
-        self.db.commit()
-        self.db.refresh(user)
+        await self.db.commit()
+        await self.db.refresh(user)
         return User(
             id=user.id,
             email=user.email,

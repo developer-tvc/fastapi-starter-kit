@@ -18,39 +18,39 @@ from app.modules.notifications.repositories.notification_repository import (
 from app.modules.notifications.services.notification_service import NotificationService
 from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter(
 )
 
 
 @router.get("/", response_model=APIResponse[list[schemas.UserResponse]])
-def read_users(
-    db: Session = Depends(get_db),
+async def read_users(
+    db: AsyncSession = Depends(get_db),  # Async session
     current_user: User = Depends(require_permission(constants.VIEW_PERMISSION)),
 ):
-    repo = SQLAlchemyUserRepository(db)
+    repo = SQLAlchemyUserRepository(db)  # Make sure repo methods are async
     use_case = ListUsers(repo)
+    users = await use_case.execute()  # execute() must be async
     return APIResponse.success_response(
-        data=use_case.execute(),
+        data=users,
         message="Users fetched successfully",
     )
 
 
 @router.post("/", response_model=APIResponse[schemas.UserResponse])
-def create_user(
+async def create_user(
     user: schemas.UserCreate,  # Request body containing user data
     background_tasks: BackgroundTasks,
-    db: Session = Depends(get_db),  # Inject database session
+    db: AsyncSession = Depends(get_db),  # Async DB session
     current_user: User = Depends(require_permission(constants.CREATE_PERMISSION)),
 ):
-    repo = SQLAlchemyUserRepository(db)  # User Repository
-    notification_repo = NotificationRepository(db)  # Notification Repository
-    notification_service = NotificationService(
-        notification_repo
-    )  # Notification Service
-    use_case = CreateUser(repo, notification_service)  # Create User Use Case
+    repo = SQLAlchemyUserRepository(db)  # Make repo methods async
+    notification_repo = NotificationRepository(db)  # Make repo methods async
+    notification_service = NotificationService(notification_repo)
+    use_case = CreateUser(repo, notification_service)  # Async use case
     
-    created_user = use_case.execute(
+    created_user = await use_case.execute(
         user.email,
         user.password,
         user.full_name,
@@ -59,75 +59,81 @@ def create_user(
         current_user,
     )
 
-    return APIResponse.success_response(created_user, "User created successfully")
-
-
+    return APIResponse.success_response(
+        created_user, "User created successfully"
+    )
 
 @router.get("/profile", response_model=APIResponse[schemas.UserResponse])
-def get_me(
-    db: Session = Depends(get_db),
+async def get_me(
+    db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_permission(constants.VIEW_PERMISSION)),
 ):
-    repo = SQLAlchemyUserRepository(db)
+    repo = SQLAlchemyUserRepository(db)  # Make repository methods async
     use_case = GetUser(repo)
+    user_data = await use_case.execute(current_user.id)  # await DB call
     return APIResponse.success_response(
-        data=use_case.execute(current_user.id),
+        data=user_data,
         message="User fetched successfully",
     )
 
 
 @router.patch("/profile", response_model=APIResponse[schemas.UserProfileResponse])
-def update_profile(
+async def update_profile(
     user: schemas.UserProfileUpdate,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_permission(constants.UPDATE_PERMISSION)),
 ):
     repo = SQLAlchemyUserRepository(db)
     use_case = UpdateUser(repo)
+    updated_user = await use_case.execute(current_user.id, user)  # await DB call
     return APIResponse.success_response(
-        data=use_case.execute(current_user.id, user),
+        data=updated_user,
         message="User updated successfully",
     )
 
 
 @router.get("/{user_id}", response_model=APIResponse[schemas.UserResponse])
-def get_user(
+async def get_user(
     user_id: int,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_permission(constants.VIEW_PERMISSION)),
 ):
     repo = SQLAlchemyUserRepository(db)
     use_case = GetUser(repo)
+    user_data = await use_case.execute(user_id)  # await DB call
     return APIResponse.success_response(
-        data=use_case.execute(user_id),
+        data=user_data,
         message="User fetched successfully",
     )
 
 
 @router.put("/{user_id}", response_model=APIResponse[schemas.UserResponse])
-def update_user(
+async def update_user(
     user_id: int,
     user: schemas.UserUpdate,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_permission(constants.UPDATE_PERMISSION)),
 ):
     repo = SQLAlchemyUserRepository(db)
     use_case = UpdateUser(repo)
+    updated_user = await use_case.execute(user_id, user)  # await DB call
     return APIResponse.success_response(
-        data=use_case.execute(user_id, user),
+        data=updated_user,
         message="User updated successfully",
     )
 
 
 @router.delete("/{user_id}", response_model=APIResponse[None])
-def delete_user(
+async def delete_user(
     user_id: int,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_permission(constants.DELETE_PERMISSION)),
 ):
     repo = SQLAlchemyUserRepository(db)
     use_case = DeleteUser(repo)
+    await use_case.execute(user_id)  # await DB call
     return APIResponse.success_response(
-        data=use_case.execute(user_id),
+        data=None,
         message="User deleted successfully",
     )
+

@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 from app.db.base_class import Base
 from app.modules.activity_logs.audit_mixin import AuditModelMixin
 
-class UserModel(Base, AuditModelMixin):
+class UserModel(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)

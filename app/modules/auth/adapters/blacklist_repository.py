@@ -1,19 +1,17 @@
 from app.modules.auth.adapters.models import BlacklistedToken
-
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 
 class BlacklistRepository:
 
-    def __init__(self, db):
+    def __init__(self, db: AsyncSession):
         self.db = db
 
-    def add(self, jti: str):
+    async def add(self, jti: str):
         token = BlacklistedToken(jti=jti)
         self.db.add(token)
-        self.db.commit()
+        await self.db.commit()
 
-    def exists(self, jti: str):
-
-        return (
-            self.db.query(BlacklistedToken).filter(BlacklistedToken.jti == jti).first()
-            is not None
-        )
+    async def exists(self, jti: str):
+        result = await self.db.execute(select(BlacklistedToken).filter(BlacklistedToken.jti == jti))
+        return result.scalar_one_or_none() is not None

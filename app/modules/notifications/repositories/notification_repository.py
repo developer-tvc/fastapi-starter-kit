@@ -2,30 +2,32 @@ from app.modules.notifications.adapters.models import NotificationModel
 from app.modules.notifications.entities.repositories import NotificationRepository
 from app.modules.notifications.adapters.models import NotificationLogModel
 from app.modules.notifications.entities.repositories import NotificationLogRepository
-
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 
 class NotificationRepository(NotificationRepository):
 
-    def __init__(self, db):
+    def __init__(self, db: AsyncSession):
         self.db = db
 
-    def create(self, user_id: int, title: str, message: str):
+    async def create(self, user_id: int, title: str, message: str):
 
         notification = NotificationModel(user_id=user_id, title=title, message=message)
-
+        print(notification,"---third")
         self.db.add(notification)
-        self.db.commit()
+        await self.db.commit()
 
-    def get_all(self, user_id: int):
-        return self.db.query(NotificationModel).all()
+    async def get_all(self, user_id: int):
+        result = await self.db.execute(select(NotificationModel))
+        return result.scalars().all()
 
 
 class NotificationLogRepository(NotificationLogRepository):
 
-    def __init__(self, db):
+    def __init__(self, db: AsyncSession):
         self.db = db
 
-    def create(
+    async def create(
         self,
         user_id: int,
         title: str,
@@ -43,4 +45,4 @@ class NotificationLogRepository(NotificationLogRepository):
             error_message=error_message,
         )
         self.db.add(notification_log)
-        self.db.commit()
+        await self.db.commit()

@@ -5,5 +5,5 @@ class DeleteRole:
     def __init__(self, repo: RoleRepository):
         self.repo = repo
 
-    def execute(self, role_id: int):
-        return self.repo.delete_role(role_id)
+    async def execute(self, role_id: int):
+        return await self.repo.delete_role(role_id)

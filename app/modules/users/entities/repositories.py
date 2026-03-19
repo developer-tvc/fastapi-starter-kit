@@ -14,7 +14,7 @@ class UserRepository(ABC):
     """
 
     @abstractmethod
-    def list_users(self) -> List[User]:
+    async def list_users(self) -> List[User]:
         pass
 
     """ method to create a new user
@@ -22,7 +22,7 @@ class UserRepository(ABC):
     """
 
     @abstractmethod
-    def create_user(self, email: str, password: str, full_name: str, roles: list[int] = [], is_verified: bool = False) -> User:
+    async def create_user(self, email: str, password: str, full_name: str, roles: list[int] = [], is_verified: bool = False) -> User:
         pass
 
     """ method to get user by email
@@ -30,7 +30,7 @@ class UserRepository(ABC):
     """
 
     @abstractmethod
-    def get_by_email(self, email: str) -> User:
+    async def get_by_email(self, email: str) -> User:
         pass
 
     """ method to get user by id
@@ -38,37 +38,37 @@ class UserRepository(ABC):
     """
 
     @abstractmethod
-    def get_by_id(self, user_id: int) -> User:
+    async def get_by_id(self, user_id: int) -> User:
         pass
 
     @abstractmethod
-    def verify_user(self, user_id: int) -> User:
+    async def verify_user(self, user_id: int) -> User:
         pass
 
     @abstractmethod
-    def update(self, user_id: int, user: dict) -> User:
+    async def update(self, user_id: int, user: dict) -> User:
         pass
 
     @abstractmethod
-    def delete(self, user_id: int) -> None:
+    async def delete(self, user_id: int) -> None:
         pass
 
     @abstractmethod
-    def update_last_login(self, user_id: int, last_login_at: datetime) -> None:
+    async def update_last_login(self, user_id: int, last_login_at: datetime) -> None:
         pass
 
     @abstractmethod
-    def update_ip_address(self, user_id: int, ip_address: str) -> None:
+    async def update_ip_address(self, user_id: int, ip_address: str) -> None:
         pass
 
     @abstractmethod
-    def update_failed_login(
+    async def update_failed_login(
         self, user_id: int, is_locked: bool, locked_until: datetime
     ) -> None:
         pass
 
     @abstractmethod
-    def update_failed_login_attempts(
+    async def update_failed_login_attempts(
         self, user_id: int, failed_login_attempts: int, attempt: bool
     ) -> None:
         pass

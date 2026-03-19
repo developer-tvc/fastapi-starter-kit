@@ -12,7 +12,7 @@ from slowapi import _rate_limit_exceeded_handler
 # First-party (your app)
 from app.core.config import settings
 from app.core.security import limiter
-from app.core.database import SessionLocal
+from app.core.database import AsyncSessionLocal
 
 # Routers
 from app.modules.users.controllers.routes import router as users_router
@@ -49,12 +49,12 @@ def create_app() -> FastAPI:
 
     # Startup Event for Test Data Generation
     @app.on_event("startup")
-    def startup_event():
+    async def startup_event():
         """Initialize application on startup (seed test data in sandbox)."""
         if settings.ENVIRONMENT == "sandbox":
-            db = SessionLocal()
+            db = AsyncSessionLocal()
             seed_test_data(db)
-            db.close()
+            await db.close()
 
     # --------------------------------------------------
     # Rate Limiter Setup

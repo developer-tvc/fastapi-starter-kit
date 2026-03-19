@@ -20,7 +20,7 @@ from fastapi import HTTPException, Request
 from app.core.security import limiter
 from app.modules.auth.services.register_device import RegisterDeviceService
 from app.modules.auth.adapters.device_repository import DeviceRepository
-
+from sqlalchemy.ext.asyncio import AsyncSession
 
 security = HTTPBearer()
 
@@ -32,7 +32,7 @@ router = APIRouter(
 @router.post("/login")
 @limiter.limit("5/minute")  # Rate Limiting
 async def login(
-    request: Request, body: schemas.LoginRequest, db: Session = Depends(get_db)
+    request: Request, body: schemas.LoginRequest, db: AsyncSession = Depends(get_db)
 ):
     repo = SQLAlchemyUserRepository(db)
     device_repo = DeviceRepository(db)  # Device Repository
@@ -50,7 +50,7 @@ async def login(
 async def login_token(
     request: Request,
     form_data: OAuth2PasswordRequestForm = Depends(),
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ):
     repo = SQLAlchemyUserRepository(db)
     service = LoginUserService(repo, None)
@@ -71,7 +71,7 @@ async def refresh_token(request: RefreshRequest):
 @router.post("/logout")
 async def logout(
     credentials: HTTPAuthorizationCredentials = Depends(security),
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ):
 
     token = credentials.credentials
@@ -82,15 +82,15 @@ async def logout(
 
 
 @router.post("/password-reset/request", response_model=APIResponse[None])
-def request_password_reset(
+async def request_password_reset(
     payload: schemas.PasswordResetRequest,
     background_tasks: BackgroundTasks,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),  
 ):
     repo = SQLAlchemyUserRepository(db)
     service = ResetPasswordRequestService(repo)
 
-    service.execute(payload, background_tasks)
+    await service.execute(payload, background_tasks)
 
     return APIResponse.success_response(
         message="If the email exists, a reset link has been sent"
@@ -98,8 +98,8 @@ def request_password_reset(
 
 
 @router.post("/password-reset/confirm", response_model=APIResponse[None])
-def confirm_password_reset(
-    payload: schemas.PasswordResetConfirm, db: Session = Depends(get_db)
+async def confirm_password_reset(
+    payload: schemas.PasswordResetConfirm, db: AsyncSession = Depends(get_db)
 ):
     user_id = verify_password_reset_token(payload.token)
 
@@ -108,14 +108,14 @@ def confirm_password_reset(
     hashed_password = hash_password(payload.new_password)
     repo = SQLAlchemyUserRepository(db)
     service = ConfirmPasswordResetService(repo)
-    service.execute(user_id, hashed_password)
+    await service.execute(user_id, hashed_password)
 
     return APIResponse.success_response(message="Password reset successfully")
 
 
 @router.post("/verify-email", response_model=APIResponse[None])
-def verify_email(
-    payload: schemas.EmailVerificationRequest, db: Session = Depends(get_db)
+async def verify_email(
+    payload: schemas.EmailVerificationRequest, db: AsyncSession = Depends(get_db)
 ):
 
     user_id = verify_email_token(payload.token)
@@ -125,6 +125,6 @@ def verify_email(
 
     repo = SQLAlchemyUserRepository(db)
     service = VerifyUserService(repo)
-    service.execute(user_id)
+    await service.execute(user_id)
 
     return APIResponse.success_response(message="Email verified successfully")

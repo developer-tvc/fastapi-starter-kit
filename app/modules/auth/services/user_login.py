@@ -14,7 +14,7 @@ class LoginUserService:
         self.register_device_service = register_device_service
 
     async def execute(self, email: str, password: str, request: Request):
-        user = self.user_repository.get_by_email(email)
+        user = await self.user_repository.get_by_email(email)
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         if not user.is_verified:
@@ -43,8 +43,8 @@ class LoginUserService:
                 user.failed_login_attempts = 0
                 user.locked_until = None
 
-                self.user_repository.update_failed_login(user.id, False, None)
-                self.user_repository.update_failed_login_attempts(user.id, 0, True)
+                await self.user_repository.update_failed_login(user.id, False, None)
+                await self.user_repository.update_failed_login_attempts(user.id, 0, True)
 
         if not verify_password(password, user.password_hash):
             if settings.LOGIN_LOCK_ENABLED:
@@ -56,10 +56,10 @@ class LoginUserService:
                         minutes=settings.LOGIN_LOCK_MINUTES
                     )
 
-                self.user_repository.update_failed_login(
+                await self.user_repository.update_failed_login(
                     user.id, user.is_locked, user.locked_until
                 )
-                self.user_repository.update_failed_login_attempts(
+                await self.user_repository.update_failed_login_attempts(
                     user.id, user.failed_login_attempts, attempt
                 )
             raise HTTPException(status_code=401, detail="Invalid password")
@@ -68,7 +68,7 @@ class LoginUserService:
             user.is_locked = False
             user.locked_until = None
             attempt = True
-            self.user_repository.update_failed_login_attempts(
+            await self.user_repository.update_failed_login_attempts(
                 user.id, user.failed_login_attempts, attempt
             )
         access_token = create_access_token({"sub": str(user.id)})
@@ -77,12 +77,12 @@ class LoginUserService:
         user.ip_address = current_ip.get()
 
         # Update last login and ip address
-        self.user_repository.update_last_login(user.id, user.last_login_at)
-        self.user_repository.update_ip_address(user.id, user.ip_address)
+        await self.user_repository.update_last_login(user.id, user.last_login_at)
+        await self.user_repository.update_ip_address(user.id, user.ip_address)
 
         # Register device
         if self.register_device_service:
-            self.register_device_service.execute(user.id, request)
+            await self.register_device_service.execute(user.id, request)
 
         return {
             "access_token": access_token,

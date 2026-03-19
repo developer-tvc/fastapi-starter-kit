@@ -9,7 +9,7 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from slowapi import Limiter
 from slowapi.util import get_remote_address
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 # First-party (your app)
 from app.core.config import settings
@@ -66,9 +66,9 @@ def create_refresh_token(data: dict):
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
-def get_current_user(
+async def get_current_user(
     token: str = Depends(oauth2_scheme),
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ):
     """Get current user from JWT token."""
     credentials_exception = HTTPException(
@@ -87,7 +87,7 @@ def get_current_user(
 
         blacklist_repo = BlacklistRepository(db)
 
-        if blacklist_repo.exists(jti):
+        if await blacklist_repo.exists(jti):
             raise credentials_exception
 
         if user_id is None:
@@ -97,7 +97,7 @@ def get_current_user(
         raise credentials_exception from exc
 
     repo = SQLAlchemyUserRepository(db)
-    user = repo.get_by_id(user_id)
+    user = await repo.get_by_id(int(user_id))
 
     if user is None:
         raise credentials_exception
@@ -122,7 +122,7 @@ def verify_refresh_token(refresh_token: str):
         if payload.get("type") != "refresh":
             raise credentials_exception
 
-        return payload["sub"]
+        return int(payload["sub"])
 
     except JWTError as exc:
         raise credentials_exception from exc
@@ -130,14 +130,14 @@ def verify_refresh_token(refresh_token: str):
 
 def require_permission(permission: str):
     """Require permission for a specific action."""
-    def permission_checker(
-        current_user=Depends(get_current_user), db: Session = Depends(get_db)
+    async def permission_checker(
+        current_user=Depends(get_current_user), db: AsyncSession = Depends(get_db)
     ):
 
         repo = SQLAlchemyRoleRepository(db)
         service = CheckPermissionService(repo)
 
-        allowed = service.execute(current_user.id, permission)
+        allowed = await service.execute(current_user.id, permission)
 
         if not allowed:
             raise HTTPException(status_code=403, detail="Permission denied")
