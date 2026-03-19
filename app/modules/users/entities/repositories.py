@@ -14,7 +14,7 @@ class UserRepository(ABC):
     """
 
     @abstractmethod
-    async def list_users(self) -> List[User]:
+    async def list_users(self,skip:int = 0,limit:int = 10) -> List[User]:
         pass
 
     """ method to create a new user

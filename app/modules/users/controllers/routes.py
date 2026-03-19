@@ -19,23 +19,45 @@ from app.modules.notifications.services.notification_service import Notification
 from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import Request
+from app.core.schemas.pagination import PaginatedResponse
 
 router = APIRouter(
 )
 
 
-@router.get("/", response_model=APIResponse[list[schemas.UserResponse]])
+@router.get("/", response_model=PaginatedResponse[schemas.UserResponse])
 async def read_users(
+    request: Request, 
+    skip: int = 0,
+    limit: int = 50,
     db: AsyncSession = Depends(get_db),  # Async session
     current_user: User = Depends(require_permission(constants.VIEW_PERMISSION)),
 ):
     repo = SQLAlchemyUserRepository(db)  # Make sure repo methods are async
     use_case = ListUsers(repo)
-    users = await use_case.execute()  # execute() must be async
-    return APIResponse.success_response(
-        data=users,
-        message="Users fetched successfully",
-    )
+    users,total = await use_case.execute(skip=skip, limit=limit)  # execute() must be async
+    
+    # Convert to response schema
+    items = [schemas.UserResponse.model_validate(u) for u in users]
+
+     # Build next & previous URLs
+    def build_url(new_skip):
+        return str(request.url.include_query_params(skip=new_skip, limit=limit))
+
+    next_url = build_url(skip + limit) if skip + limit < total else None
+    prev_url = build_url(skip - limit) if skip > 0 else None
+
+    return PaginatedResponse(
+            success=True,
+            message="Users fetched successfully",
+            total=total,
+            next=next_url,
+            previous=prev_url,
+            data=items,
+        )
+        
+ 
 
 
 @router.post("/", response_model=APIResponse[schemas.UserResponse])

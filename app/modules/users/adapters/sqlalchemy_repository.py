@@ -6,6 +6,7 @@ from app.modules.roles.adapters.models import UserRoleModel
 from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy import func
 
 """ Implementation of UserRepository using SQLAlchemy
  Concrete implementation of the UserRepository interface
@@ -20,10 +21,17 @@ class SQLAlchemyUserRepository(UserRepository):
 
     # Fetch all users from database
     
-    async def list_users(self) -> list[User]:
+    async def list_users(self,skip:int = 0,limit:int = 10) -> list[User]:
         # Execute the select query asynchronously
-        result = await self.db.execute(select(UserModel))
+        result = await self.db.execute(select(UserModel).offset(skip).limit(limit))
         users = result.scalars().all()  # this returns a list of UserModel
+        # Get total count
+        total_result = await self.db.execute(
+            select(func.count()).select_from(UserModel)
+        )
+        total = total_result.scalar()
+
+
         # Convert DB models to domain entities
         return [
             User(
@@ -35,7 +43,7 @@ class SQLAlchemyUserRepository(UserRepository):
                 is_verified=user.is_verified,
             )
             for user in users
-        ]
+        ],total
 
     # Create a new user in the database
     async def create_user(
