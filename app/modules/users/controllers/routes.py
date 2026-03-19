@@ -16,13 +16,14 @@ from app.modules.notifications.repositories.notification_repository import (
     NotificationRepository,
 )
 from app.modules.notifications.services.notification_service import NotificationService
+from sqlalchemy.exc import IntegrityError
+from fastapi import HTTPException, status
 
 router = APIRouter(
-    tags=["Users"],
 )
 
 
-@router.get("/", response_model=APIResponse[list[schemas.UserList]])
+@router.get("/", response_model=APIResponse[list[schemas.UserResponse]])
 def read_users(
     db: Session = Depends(get_db),
     current_user: User = Depends(require_permission(constants.VIEW_PERMISSION)),
@@ -48,6 +49,7 @@ def create_user(
         notification_repo
     )  # Notification Service
     use_case = CreateUser(repo, notification_service)  # Create User Use Case
+    
     created_user = use_case.execute(
         user.email,
         user.password,
@@ -58,6 +60,7 @@ def create_user(
     )
 
     return APIResponse.success_response(created_user, "User created successfully")
+
 
 
 @router.get("/profile", response_model=APIResponse[schemas.UserResponse])

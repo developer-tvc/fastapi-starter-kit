@@ -29,7 +29,9 @@ from app.core.middleware.activity_context import activity_context_middleware
 from app.core.middleware.cors_middleware import add_cors_middleware
 from app.core.middleware.security_headers_middleware import SecurityHeadersMiddleware
 from app.core.middleware.ip_whitelist_middleware import IPWhitelistMiddleware
-
+from app.core.middleware.exceptions_middleware import ExceptionHandlerMiddleware
+from app.core.middleware.validation_middleware import validation_exception_handler
+from fastapi.exceptions import RequestValidationError
 # Services
 from app.core.services.test_data_generator import seed_test_data
 
@@ -63,26 +65,28 @@ def create_app() -> FastAPI:
     # --------------------------------------------------
     # Middleware Order (Important)
     # --------------------------------------------------
-
-    # 1. Global Error Handler
+    # 1.Exception Handler
+    app.add_middleware(ExceptionHandlerMiddleware)
+    app.add_exception_handler(RequestValidationError, validation_exception_handler)
+    # 2. Global Error Handler
     app.add_middleware(ErrorMiddleware)
 
-    # 2. IP security
+    # 3. IP security
     app.add_middleware(IPWhitelistMiddleware)
 
-    # 3. Correlation ID
+    # 4. Correlation ID
     app.add_middleware(CorrelationIdMiddleware)
 
-    # 4. Request Time Logging
+    # 5. Request Time Logging
     app.add_middleware(RequestTimeMiddleware)
 
-    # 5. Security Headers
+    # 6. Security Headers
     app.add_middleware(SecurityHeadersMiddleware)
 
-    # 6. Activity Logging Context
+    # 7. Activity Logging Context
     app.middleware("http")(activity_context_middleware)
 
-    # 7. CORS
+    # 8. CORS
     add_cors_middleware(app)
 
     # -----------------------------

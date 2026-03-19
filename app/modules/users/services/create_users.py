@@ -3,6 +3,8 @@ from app.core.config import get_settings
 from app.modules.notifications.services.notification_service import NotificationService
 from app.core.security import create_email_verification_token
 from app.core.services.email_templates import email_verification_template
+from app.modules.users.entities.entities import User
+from app.core.exceptions import EmailAlreadyExists
 
 settings = get_settings()
 
@@ -10,7 +12,7 @@ settings = get_settings()
 # Use case class responsible for creating a new user
 class CreateUser:
     # Initialize the use case with a user repository
-    def __init__(self, repo, notification_service):
+    def __init__(self, repo, notification_service) -> None:
         self.repo = repo
         self.notification_service = notification_service
 
@@ -23,7 +25,12 @@ class CreateUser:
         roles: list[int] = [],
         background_tasks=None,
         current_user=None,
-    ):
+    ) -> User:
+        # Check if user exists first
+        existing_user = self.repo.get_by_email(email)
+        
+        if existing_user:
+            raise EmailAlreadyExists(f"User with email {email} already exists")
 
         # Hash the plain password before storing it in the database
         password_hash = hash_password(password)

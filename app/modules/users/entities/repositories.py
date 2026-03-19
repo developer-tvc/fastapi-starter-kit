@@ -22,7 +22,7 @@ class UserRepository(ABC):
     """
 
     @abstractmethod
-    def create_user(self, user: User) -> User:
+    def create_user(self, email: str, password: str, full_name: str, roles: list[int] = [], is_verified: bool = False) -> User:
         pass
 
     """ method to get user by email

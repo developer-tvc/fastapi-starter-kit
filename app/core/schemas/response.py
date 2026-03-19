@@ -22,3 +22,18 @@ class APIResponse(BaseModel, Generic[T]):
         Returns a success response.
         """
         return APIResponse(success=True, message=message, data=data)
+
+    @staticmethod
+    def error_response(message="Error", errors=None):
+        """
+        Returns an error response.
+        """
+        return APIResponse(success=False, message=message, data=errors)
+
+    @staticmethod
+    def validation_error_response(message: str, errors: list = None):
+        return {   # must return dict
+            "success": False,
+            "message": message,
+            "errors": errors or []
+        }

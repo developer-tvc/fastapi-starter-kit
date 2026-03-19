@@ -1,9 +1,7 @@
-from sqlalchemy import Column, Integer, String, Boolean
-from app.core.database import Base
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, func 
 from sqlalchemy.orm import relationship
-from sqlalchemy import DateTime
+from app.db.base_class import Base
 from app.modules.activity_logs.audit_mixin import AuditModelMixin
-
 
 class UserModel(Base, AuditModelMixin):
     __tablename__ = "users"
@@ -27,3 +25,5 @@ class UserModel(Base, AuditModelMixin):
     locked_until = Column(DateTime, nullable=True)
     last_failed_login_at = Column(DateTime, nullable=True)
     ip_address = Column(String, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now()) 

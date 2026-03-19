@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
-from app.core.database import Base
+from app.db.base_class import Base
 from app.modules.activity_logs.audit_mixin import AuditModelMixin
 
 
