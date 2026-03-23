@@ -1,4 +1,5 @@
 from fastapi import Request
+
 from app.modules.activity_logs.request_context import current_ip
 
 

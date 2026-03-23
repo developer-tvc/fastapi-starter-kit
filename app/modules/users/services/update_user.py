@@ -1,4 +1,6 @@
 from app.core.exceptions import UserNotFound
+
+
 class UpdateUser:
     def __init__(self, repo):
         self.repo = repo

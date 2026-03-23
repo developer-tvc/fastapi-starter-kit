@@ -1,9 +1,9 @@
 """
 Logger is a class that is used to log messages.
 """
-import os
-import logging
 import json
+import logging
+import os
 from datetime import datetime
 
 LOG_FILE = "logs/app.log"

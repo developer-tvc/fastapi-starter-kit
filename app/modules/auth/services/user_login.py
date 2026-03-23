@@ -1,10 +1,12 @@
-from app.modules.users.entities.repositories import UserRepository
-from app.core.security import create_access_token, create_refresh_token, verify_password
-from fastapi import HTTPException
 from datetime import datetime, timedelta
-from app.modules.activity_logs.request_context import current_ip
+
+from fastapi import HTTPException, Request
+
 from app.core.config import settings
-from fastapi import Request
+from app.core.security import (create_access_token, create_refresh_token,
+                               verify_password)
+from app.modules.activity_logs.request_context import current_ip
+from app.modules.users.entities.repositories import UserRepository
 
 
 class LoginUserService:
@@ -16,7 +18,7 @@ class LoginUserService:
     async def execute(self, email: str, password: str, request: Request):
         user = await self.user_repository.get_by_email(email)
         if not user:
-            raise HTTPException(status_code=404, detail="User not found")
+            raise HTTPException(status_code=401, detail="Invalid credentials")
         if not user.is_verified:
             raise HTTPException(
                 status_code=401,
@@ -62,7 +64,7 @@ class LoginUserService:
                 await self.user_repository.update_failed_login_attempts(
                     user.id, user.failed_login_attempts, attempt
                 )
-            raise HTTPException(status_code=401, detail="Invalid password")
+            raise HTTPException(status_code=401, detail="Invalid credentials")
         if settings.LOGIN_LOCK_ENABLED:
             user.failed_login_attempts = 0
             user.is_locked = False

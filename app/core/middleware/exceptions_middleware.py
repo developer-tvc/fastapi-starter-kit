@@ -2,7 +2,10 @@
 from fastapi import Request
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
-from app.core.exceptions import UserNotFound, EmailAlreadyExists, PermissionDenied
+
+from app.core.exceptions import (EmailAlreadyExists, PermissionDenied,
+                                 UserNotFound)
+
 
 class ExceptionHandlerMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):

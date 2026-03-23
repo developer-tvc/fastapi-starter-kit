@@ -1,5 +1,7 @@
 import time
+
 from starlette.middleware.base import BaseHTTPMiddleware
+
 from app.core.logging.logger import get_logger
 
 logger = get_logger(__name__)

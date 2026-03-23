@@ -1,13 +1,11 @@
-from app.modules.roles.adapters.models import (
-    PermissionModel,
-    RolePermissionModel,
-    UserRoleModel,
-    RoleModel,
-)
-from app.modules.roles.entities.repositories import RoleRepository
 from fastapi import HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.modules.roles.adapters.models import (PermissionModel, RoleModel,
+                                               RolePermissionModel,
+                                               UserRoleModel)
+from app.modules.roles.entities.repositories import RoleRepository
 
 
 class SQLAlchemyRoleRepository(RoleRepository):

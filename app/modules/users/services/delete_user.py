@@ -1,5 +1,6 @@
 from app.core.exceptions import UserNotFound
 
+
 class DeleteUser:
     def __init__(self, repo):
         self.repo = repo

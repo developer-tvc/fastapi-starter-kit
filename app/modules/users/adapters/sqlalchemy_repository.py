@@ -1,12 +1,13 @@
-from sqlalchemy.orm import Session
-from app.modules.users.entities.repositories import UserRepository
-from app.modules.users.entities.entities import User
-from app.modules.users.adapters.models import UserModel
-from app.modules.roles.adapters.models import UserRoleModel
 from datetime import datetime
+
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
-from sqlalchemy import func
+from sqlalchemy.orm import Session
+
+from app.modules.roles.adapters.models import UserRoleModel
+from app.modules.users.adapters.models import UserModel
+from app.modules.users.entities.entities import User
+from app.modules.users.entities.repositories import UserRepository
 
 """ Implementation of UserRepository using SQLAlchemy
  Concrete implementation of the UserRepository interface
@@ -20,6 +21,16 @@ class SQLAlchemyUserRepository(UserRepository):
         self.db = db
 
     # Fetch all users from database
+
+    def _to_entity(self, model: UserModel) -> User:
+        return User(
+            id=model.id,
+            email=model.email,
+            full_name=model.full_name,
+            password_hash=model.password,
+            is_active=model.is_active,
+            is_verified=model.is_verified,
+        )
     
     async def list_users(self,skip:int = 0,limit:int = 10) -> list[User]:
         # Execute the select query asynchronously
@@ -32,18 +43,8 @@ class SQLAlchemyUserRepository(UserRepository):
         total = total_result.scalar()
 
 
-        # Convert DB models to domain entities
-        return [
-            User(
-                id=user.id,
-                email=user.email,
-                full_name=user.full_name,
-                password_hash=user.password,
-                is_active=user.is_active,
-                is_verified=user.is_verified,
-            )
-            for user in users
-        ],total
+        # Map to domain entities
+        return [self._to_entity(user) for user in users], total
 
     # Create a new user in the database
     async def create_user(

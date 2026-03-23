@@ -1,6 +1,7 @@
-from jose import jwt, JWTError
 from fastapi import HTTPException
-from app.core.security import SECRET_KEY, ALGORITHM, create_access_token
+from jose import JWTError, jwt
+
+from app.core.security import ALGORITHM, SECRET_KEY, create_access_token
 
 
 class RefreshTokenService:

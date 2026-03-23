@@ -1,17 +1,19 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, func 
+from sqlalchemy import Boolean, Column, DateTime, Integer, String, func
 from sqlalchemy.orm import relationship
+
 from app.db.base_class import Base
 from app.modules.activity_logs.audit_mixin import AuditModelMixin
+
 
 class UserModel(Base):
     __tablename__ = "users"
 
-    id = Column(Integer, primary_key=True, index=True)
-    email = Column(String, unique=True, index=True)
-    password = Column(String)
+    id = Column(Integer, primary_key=True)
+    email = Column(String(255), unique=True, index=True, nullable=False)
+    password = Column(String(255), nullable=False)
     is_active = Column(Boolean, default=True)
-    full_name = Column(String, nullable=True)
-    phone = Column(String, nullable=True)
+    full_name = Column(String(100), nullable=True)
+    phone = Column(String(15), nullable=True)
     profile_picture = Column(String, nullable=True)
     is_verified = Column(Boolean, default=False)
     roles = relationship(

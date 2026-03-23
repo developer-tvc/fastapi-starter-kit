@@ -1,9 +1,10 @@
 """
 ErrorMiddleware is a middleware that catches all exceptions and returns a JSON response.
 """
-from starlette.middleware.base import BaseHTTPMiddleware
-from fastapi.responses import JSONResponse
 from fastapi import HTTPException
+from fastapi.responses import JSONResponse
+from starlette.middleware.base import BaseHTTPMiddleware
+
 from app.core.logging.logger import get_logger
 
 logger = get_logger(__name__)

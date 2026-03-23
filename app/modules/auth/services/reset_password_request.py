@@ -1,8 +1,9 @@
-from app.modules.users.adapters.sqlalchemy_repository import SQLAlchemyUserRepository
-from app.core.security import create_password_reset_token
-from app.core.services.email_templates import password_reset_email
-from app.core.services.email_service import send_email
 from app.core.config import get_settings
+from app.core.security import create_password_reset_token
+from app.core.services.email_service import send_email
+from app.core.services.email_templates import password_reset_email
+from app.modules.users.adapters.sqlalchemy_repository import \
+    SQLAlchemyUserRepository
 
 settings = get_settings()
 

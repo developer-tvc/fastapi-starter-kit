@@ -1,9 +1,11 @@
-from app.modules.notifications.adapters.models import NotificationModel
-from app.modules.notifications.entities.repositories import NotificationRepository
-from app.modules.notifications.adapters.models import NotificationLogModel
-from app.modules.notifications.entities.repositories import NotificationLogRepository
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.modules.notifications.adapters.models import (NotificationLogModel,
+                                                       NotificationModel)
+from app.modules.notifications.entities.repositories import (
+    NotificationLogRepository, NotificationRepository)
+
 
 class NotificationRepository(NotificationRepository):
 

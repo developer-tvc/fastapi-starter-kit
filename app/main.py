@@ -6,34 +6,36 @@ FastAPI application entry point.
 
 # Third-party
 from fastapi import FastAPI
-from slowapi.errors import RateLimitExceeded
+from fastapi.exceptions import RequestValidationError
 from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 
 # First-party (your app)
 from app.core.config import settings
-from app.core.security import limiter
 from app.core.database import AsyncSessionLocal
-
-# Routers
-from app.modules.users.controllers.routes import router as users_router
-from app.modules.auth.controllers.routes import router as auth_router
-from app.modules.roles.controllers.routes import router as role_router
-from app.modules.notifications.controllers.routes import router as notification_router
-from app.modules.system.controllers.routes import router as system_router
-
+from app.core.logging.error_middleware import ErrorMiddleware
 # Middleware
 from app.core.logging.middleware import CorrelationIdMiddleware
-from app.core.logging.error_middleware import ErrorMiddleware
-from app.core.middleware.request_time_middleware import RequestTimeMiddleware
 from app.core.middleware.activity_context import activity_context_middleware
 from app.core.middleware.cors_middleware import add_cors_middleware
-from app.core.middleware.security_headers_middleware import SecurityHeadersMiddleware
+from app.core.middleware.exceptions_middleware import \
+    ExceptionHandlerMiddleware
 from app.core.middleware.ip_whitelist_middleware import IPWhitelistMiddleware
-from app.core.middleware.exceptions_middleware import ExceptionHandlerMiddleware
-from app.core.middleware.validation_middleware import validation_exception_handler
-from fastapi.exceptions import RequestValidationError
+from app.core.middleware.request_time_middleware import RequestTimeMiddleware
+from app.core.middleware.security_headers_middleware import \
+    SecurityHeadersMiddleware
+from app.core.middleware.validation_middleware import \
+    validation_exception_handler
+from app.core.security import limiter
 # Services
 from app.core.services.test_data_generator import seed_test_data
+from app.modules.auth.controllers.routes import router as auth_router
+from app.modules.notifications.controllers.routes import \
+    router as notification_router
+from app.modules.roles.controllers.routes import router as role_router
+from app.modules.system.controllers.routes import router as system_router
+# Routers
+from app.modules.users.controllers.routes import router as users_router
 
 
 def create_app() -> FastAPI:

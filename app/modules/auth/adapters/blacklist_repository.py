@@ -1,6 +1,8 @@
-from app.modules.auth.adapters.models import BlacklistedToken
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.modules.auth.adapters.models import BlacklistedToken
+
 
 class BlacklistRepository:
 

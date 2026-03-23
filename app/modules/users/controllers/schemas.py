@@ -1,23 +1,37 @@
-from pydantic import BaseModel, EmailStr, Field, field_validator
 from typing import Optional
+
+from pydantic import BaseModel, EmailStr, Field, field_validator
+
 
 class UserBase(BaseModel):
     email: EmailStr
-    full_name: str | None = None
+    full_name: Optional[str] = Field(None, max_length=100)
 
+    @field_validator("full_name")
+    def normalize_full_name(cls, v):
+        if v:
+            return v.strip()
+        return v
 
 class UserCreate(BaseModel):
-    password: str
     email: EmailStr
-    full_name: str
+    password: str = Field(..., min_length=8, max_length=128)
+    full_name: str = Field(..., min_length=1, max_length=100)
     roles: list[int] = []
+
+    @field_validator("email")
+    def normalize_email(cls, v):
+        return v.lower().strip()
 
     @field_validator("password")
     def validate_password(cls, v):
-        if len(v) < 8:
-            raise ValueError("Password must be at least 8 characters long")
+        if not (8 <= len(v) <= 128):
+            raise ValueError("Password must be between 8 and 128 characters")
         return v
 
+    @field_validator("full_name")
+    def normalize_full_name(cls, v):
+        return v.strip()
 
 class UserResponse(UserBase):
     id: int
@@ -25,11 +39,19 @@ class UserResponse(UserBase):
     model_config = {"from_attributes": True}
 
 
+
 class UserUpdate(BaseModel):
-    full_name: str | None = None
+    full_name: Optional[str] = Field(None, max_length=100)
     roles: list[int] | None = None
 
+    @field_validator("full_name")
+    def normalize_full_name(cls, v):
+        if v:
+            return v.strip()
+        return v
+
     model_config = {"from_attributes": True}
+
 
 
 class UserProfileUpdate(BaseModel):

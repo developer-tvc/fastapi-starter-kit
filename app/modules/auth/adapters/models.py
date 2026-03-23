@@ -1,7 +1,9 @@
-from sqlalchemy import Column, String, DateTime, Integer, ForeignKey
-from sqlalchemy.sql import func
-from app.db.base_class import Base
 from datetime import datetime
+
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy.sql import func
+
+from app.db.base_class import Base
 
 
 class BlacklistedToken(Base):

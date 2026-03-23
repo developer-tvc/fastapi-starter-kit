@@ -1,5 +1,5 @@
-from app.modules.users.entities.entities import User
 from app.core.exceptions import UserNotFound
+from app.modules.users.entities.entities import User
 
 
 class GetUser:

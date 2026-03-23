@@ -1,8 +1,9 @@
-from app.modules.auth.entities.repositories import DeviceRegisterRepository
-from app.modules.auth.adapters.models import UserDevice
-from sqlalchemy.ext.asyncio import AsyncSession
-from app.modules.auth.entities.entities import UserDeviceEntity
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.modules.auth.adapters.models import UserDevice
+from app.modules.auth.entities.entities import UserDeviceEntity
+from app.modules.auth.entities.repositories import DeviceRegisterRepository
 
 
 class DeviceRepository(DeviceRegisterRepository):

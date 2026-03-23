@@ -15,9 +15,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.config import settings
 from app.core.dependencies import get_db
 from app.modules.auth.adapters.blacklist_repository import BlacklistRepository
-from app.modules.roles.adapters.sqlalchemy_repository import SQLAlchemyRoleRepository
+from app.modules.roles.adapters.sqlalchemy_repository import \
+    SQLAlchemyRoleRepository
 from app.modules.roles.services.check_permission import CheckPermissionService
-from app.modules.users.adapters.sqlalchemy_repository import SQLAlchemyUserRepository
+from app.modules.users.adapters.sqlalchemy_repository import \
+    SQLAlchemyUserRepository
 
 SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = settings.ALGORITHM

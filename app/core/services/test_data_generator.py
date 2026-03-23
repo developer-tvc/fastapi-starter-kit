@@ -1,10 +1,12 @@
-from faker import Faker
 from datetime import datetime
-from app.modules.users.adapters.models import UserModel
-from app.modules.roles.adapters.models import RoleModel, PermissionModel
-from app.core.security import hash_password
-from app.core.constants import ROLES, PERMISSIONS
+
+from faker import Faker
+
+from app.core.constants import PERMISSIONS, ROLES
 from app.core.logging.logger import get_logger
+from app.core.security import hash_password
+from app.modules.roles.adapters.models import PermissionModel, RoleModel
+from app.modules.users.adapters.models import UserModel
 
 fake = Faker()
 

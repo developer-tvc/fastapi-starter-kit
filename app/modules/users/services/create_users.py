@@ -1,10 +1,10 @@
-from app.core.security import hash_password
 from app.core.config import get_settings
-from app.modules.notifications.services.notification_service import NotificationService
-from app.core.security import create_email_verification_token
-from app.core.services.email_templates import email_verification_template
-from app.modules.users.entities.entities import User
 from app.core.exceptions import EmailAlreadyExists
+from app.core.security import create_email_verification_token, hash_password
+from app.core.services.email_templates import email_verification_template
+from app.modules.notifications.services.notification_service import \
+    NotificationService
+from app.modules.users.entities.entities import User
 
 settings = get_settings()
 

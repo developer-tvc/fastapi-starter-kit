@@ -1,8 +1,10 @@
-from app.modules.auth.entities.repositories import DeviceRegisterRepository
-from app.modules.auth.entities.entities import UserDeviceEntity
-from fastapi import Request
 import uuid
 from datetime import datetime
+
+from fastapi import Request
+
+from app.modules.auth.entities.entities import UserDeviceEntity
+from app.modules.auth.entities.repositories import DeviceRegisterRepository
 
 
 class RegisterDeviceService:

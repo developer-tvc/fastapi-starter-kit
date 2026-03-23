@@ -1,9 +1,9 @@
 """
 APIResponse is a generic response class that can be used to return data from the API.
 """
-from typing import Generic, TypeVar, Optional
-from pydantic import BaseModel
+from typing import Generic, Optional, TypeVar
 
+from pydantic import BaseModel
 
 T = TypeVar("T")
 

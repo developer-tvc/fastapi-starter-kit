@@ -8,5 +8,5 @@ class VerifyUserService:
     async def execute(self, user_id: int):
         user = await self.user_repository.get_by_id(user_id)
         if not user:
-            raise Exception("User not found")
+            raise HTTPException(status_code=404, detail="Invalid credentials")
         return await self.user_repository.verify_user(user_id)

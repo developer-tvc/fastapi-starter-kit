@@ -1,6 +1,7 @@
 from datetime import datetime
 
-from app.modules.notifications.entities.repositories import NotificationRepository
+from app.modules.notifications.entities.repositories import \
+    NotificationRepository
 from app.modules.users.entities.entities import User
 from app.modules.users.entities.repositories import UserRepository
 

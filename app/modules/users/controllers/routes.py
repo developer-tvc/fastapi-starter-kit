@@ -1,32 +1,34 @@
-from app.modules.users.services.create_users import CreateUser
-from app.modules.users.controllers import schemas
-from app.modules.users.adapters.sqlalchemy_repository import SQLAlchemyUserRepository
-from app.modules.users.services.list_users import ListUsers
-from fastapi import APIRouter, Depends, BackgroundTasks
-from sqlalchemy.orm import Session
-from app.modules.users.entities.entities import User
-from app.core.dependencies import get_db
-from app.core.security import require_permission
-from app.modules.users import constants
-from app.core.schemas.response import APIResponse
-from app.modules.users.services.get_user import GetUser
-from app.modules.users.services.update_user import UpdateUser
-from app.modules.users.services.delete_user import DeleteUser
-from app.modules.notifications.repositories.notification_repository import (
-    NotificationRepository,
-)
-from app.modules.notifications.services.notification_service import NotificationService
+from fastapi import (APIRouter, BackgroundTasks, Depends, HTTPException,
+                     Request, status)
 from sqlalchemy.exc import IntegrityError
-from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import Request
+from sqlalchemy.orm import Session
+
+from app.core.dependencies import get_db
 from app.core.schemas.pagination import PaginatedResponse
+from app.core.schemas.response import APIResponse
+from app.core.security import limiter, require_permission
+from app.modules.notifications.repositories.notification_repository import \
+    NotificationRepository
+from app.modules.notifications.services.notification_service import \
+    NotificationService
+from app.modules.users import constants
+from app.modules.users.adapters.sqlalchemy_repository import \
+    SQLAlchemyUserRepository
+from app.modules.users.controllers import schemas
+from app.modules.users.entities.entities import User
+from app.modules.users.services.create_users import CreateUser
+from app.modules.users.services.delete_user import DeleteUser
+from app.modules.users.services.get_user import GetUser
+from app.modules.users.services.list_users import ListUsers
+from app.modules.users.services.update_user import UpdateUser
 
 router = APIRouter(
 )
 
 
 @router.get("/", response_model=PaginatedResponse[schemas.UserResponse])
+@limiter.limit("5/minute")  # Rate Limiting
 async def read_users(
     request: Request, 
     skip: int = 0,
@@ -61,7 +63,9 @@ async def read_users(
 
 
 @router.post("/", response_model=APIResponse[schemas.UserResponse])
+@limiter.limit("5/minute")  # Rate Limiting
 async def create_user(
+    request: Request,
     user: schemas.UserCreate,  # Request body containing user data
     background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),  # Async DB session
@@ -86,7 +90,9 @@ async def create_user(
     )
 
 @router.get("/profile", response_model=APIResponse[schemas.UserResponse])
+@limiter.limit("5/minute")  # Rate Limiting
 async def get_me(
+    request: Request,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_permission(constants.VIEW_PERMISSION)),
 ):
@@ -100,7 +106,9 @@ async def get_me(
 
 
 @router.patch("/profile", response_model=APIResponse[schemas.UserProfileResponse])
+@limiter.limit("5/minute")  # Rate Limiting
 async def update_profile(
+    request: Request,
     user: schemas.UserProfileUpdate,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_permission(constants.UPDATE_PERMISSION)),
@@ -115,7 +123,9 @@ async def update_profile(
 
 
 @router.get("/{user_id}", response_model=APIResponse[schemas.UserResponse])
+@limiter.limit("5/minute")  # Rate Limiting
 async def get_user(
+    request: Request,
     user_id: int,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_permission(constants.VIEW_PERMISSION)),
@@ -130,7 +140,9 @@ async def get_user(
 
 
 @router.put("/{user_id}", response_model=APIResponse[schemas.UserResponse])
+@limiter.limit("5/minute")  # Rate Limiting
 async def update_user(
+    request: Request,
     user_id: int,
     user: schemas.UserUpdate,
     db: AsyncSession = Depends(get_db),
@@ -146,7 +158,9 @@ async def update_user(
 
 
 @router.delete("/{user_id}", response_model=APIResponse[None])
+@limiter.limit("5/minute")  # Rate Limiting
 async def delete_user(
+    request: Request,
     user_id: int,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(require_permission(constants.DELETE_PERMISSION)),

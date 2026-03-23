@@ -1,15 +1,16 @@
 from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.dependencies import get_db
+from app.core.schemas.response import APIResponse
 from app.core.security import require_permission
 from app.modules.notifications import constants
-from app.core.schemas.response import APIResponse
-from app.modules.notifications.repositories.notification_repository import (
-    NotificationRepository,
-)
-from app.modules.notifications.services.list_notifications import ListNotificationsService
 from app.modules.notifications.controllers import schemas
+from app.modules.notifications.repositories.notification_repository import \
+    NotificationRepository
+from app.modules.notifications.services.list_notifications import \
+    ListNotificationsService
 from app.modules.users.entities.entities import User
-from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter(
     tags=["Notifications"],
