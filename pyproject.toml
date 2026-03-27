@@ -38,6 +38,7 @@ dev = [
     "pytest (>=9.0.2,<10.0.0)"
 ]
 
+
 [tool.black]
 line-length = 88
 target-version = ["py311"]
@@ -45,3 +46,7 @@ target-version = ["py311"]
 [tool.isort]
 profile = "black"
 line_length = 88
+
+[tool.pylint.main]
+init-hook = "import sys; sys.path.insert(0, '.')"
+
