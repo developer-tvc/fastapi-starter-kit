@@ -11,7 +11,7 @@ SMTP_PASSWORD = settings.SMTP_PASSWORD
 
 
 async def send_email(to_email: str, subject: str, body: str):
-    
+
     if not settings.EMAIL_SERVICE:
         return
 
@@ -25,7 +25,7 @@ async def send_email(to_email: str, subject: str, body: str):
     msg["From"] = SMTP_USERNAME
     msg["Subject"] = subject
     msg.attach(MIMEText(body, "plain"))
-    
+
     with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
         server.starttls()
         server.login(SMTP_USERNAME, SMTP_PASSWORD)

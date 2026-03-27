@@ -1,7 +1,6 @@
 from datetime import datetime
 
-from app.modules.notifications.entities.repositories import \
-    NotificationRepository
+from app.modules.notifications.entities.repositories import NotificationRepository
 from app.modules.users.entities.entities import User
 from app.modules.users.entities.repositories import UserRepository
 
@@ -17,11 +16,10 @@ class FakeUserRepository(UserRepository):
     def __init__(self):
         self.users = []
 
-    def list_users(self):
-        """Return all users stored in memory."""
-        return self.users
+    async def list_users(self, skip: int = 0, limit: int = 10):
+        return self.users[skip : skip + limit]
 
-    def create_user(
+    async def create_user(
         self,
         email: str,
         password: str,
@@ -44,12 +42,12 @@ class FakeUserRepository(UserRepository):
         self.users.append(user)
         return user
 
-    def delete(self, user_id: int) -> None:
+    async def delete(self, user_id: int) -> None:
         """Delete a user by ID."""
         self.users = [user for user in self.users if user.id != user_id]
         return None
 
-    def update(self, user_id: int, user: dict) -> User:
+    async def update(self, user_id: int, user: dict) -> User:
         """Update a user by ID."""
         for i, u in enumerate(self.users):
             if u.id == user_id:
@@ -57,21 +55,21 @@ class FakeUserRepository(UserRepository):
                 return self.users[i]
         return None
 
-    def get_by_email(self, email: str) -> User:
+    async def get_by_email(self, email: str) -> User:
         """Get a user by email."""
         for user in self.users:
             if user.email == email:
                 return user
         return None
 
-    def get_by_id(self, user_id: int) -> User:
+    async def get_by_id(self, user_id: int) -> User:
         """Get a user by ID."""
         for user in self.users:
             if user.id == user_id:
                 return user
         return None
 
-    def verify_user(self, user_id: int) -> User:
+    async def verify_user(self, user_id: int) -> User:
         """Verify a user by ID."""
         for user in self.users:
             if user.id == user_id:
@@ -79,7 +77,7 @@ class FakeUserRepository(UserRepository):
                 return user
         return None
 
-    def update_last_login(self, user_id: int, last_login_at: datetime) -> None:
+    async def update_last_login(self, user_id: int, last_login_at: datetime) -> None:
         """Update the last login time for a user."""
         for user in self.users:
             if user.id == user_id:
@@ -87,7 +85,7 @@ class FakeUserRepository(UserRepository):
                 return None
         return None
 
-    def update_ip_address(self, user_id: int, ip_address: str) -> None:
+    async def update_ip_address(self, user_id: int, ip_address: str) -> None:
         """Update the IP address for a user."""
         for user in self.users:
             if user.id == user_id:
@@ -95,7 +93,7 @@ class FakeUserRepository(UserRepository):
                 return None
         return None
 
-    def update_failed_login(
+    async def update_failed_login(
         self, user_id: int, is_locked: bool, locked_until: datetime
     ) -> None:
         """Update the failed login status for a user."""
@@ -106,7 +104,7 @@ class FakeUserRepository(UserRepository):
                 return None
         return None
 
-    def update_failed_login_attempts(
+    async def update_failed_login_attempts(
         self, user_id: int, failed_login_attempts: int, attempt: bool
     ) -> None:
         """Update the failed login attempts for a user."""

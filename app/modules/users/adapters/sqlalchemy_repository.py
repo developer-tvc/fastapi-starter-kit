@@ -31,8 +31,8 @@ class SQLAlchemyUserRepository(UserRepository):
             is_active=model.is_active,
             is_verified=model.is_verified,
         )
-    
-    async def list_users(self,skip:int = 0,limit:int = 10) -> list[User]:
+
+    async def list_users(self, skip: int = 0, limit: int = 10) -> list[User]:
         # Execute the select query asynchronously
         result = await self.db.execute(select(UserModel).offset(skip).limit(limit))
         users = result.scalars().all()  # this returns a list of UserModel
@@ -41,7 +41,6 @@ class SQLAlchemyUserRepository(UserRepository):
             select(func.count()).select_from(UserModel)
         )
         total = total_result.scalar()
-
 
         # Map to domain entities
         return [self._to_entity(user) for user in users], total
@@ -164,7 +163,9 @@ class SQLAlchemyUserRepository(UserRepository):
 
     async def update(self, user_id: int, user: dict):
 
-        user_obj = await self.db.execute(select(UserModel).where(UserModel.id == user_id))
+        user_obj = await self.db.execute(
+            select(UserModel).where(UserModel.id == user_id)
+        )
         user_obj = user_obj.scalar_one_or_none()
         if not user_obj:
             return None
@@ -180,7 +181,9 @@ class SQLAlchemyUserRepository(UserRepository):
         if roles is not None:
 
             # remove existing roles
-            await self.db.execute(select(UserRoleModel).where(UserRoleModel.user_id == user_id))
+            await self.db.execute(
+                select(UserRoleModel).where(UserRoleModel.user_id == user_id)
+            )
 
             # insert new roles
             for role_id in roles:
@@ -190,7 +193,9 @@ class SQLAlchemyUserRepository(UserRepository):
         await self.db.refresh(user_obj)
 
         if roles is None:
-            roles_result = await self.db.execute(select(UserRoleModel.role_id).where(UserRoleModel.user_id == user_id))
+            roles_result = await self.db.execute(
+                select(UserRoleModel.role_id).where(UserRoleModel.user_id == user_id)
+            )
             roles = roles_result.scalars().all()
 
         return User(

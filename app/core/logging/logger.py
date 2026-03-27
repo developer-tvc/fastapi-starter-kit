@@ -1,6 +1,7 @@
 """
 Logger is a class that is used to log messages.
 """
+
 import json
 import logging
 import os
@@ -15,6 +16,7 @@ class JSONFormatter(logging.Formatter):
     """
     JSONFormatter is a formatter that formats log records as JSON.
     """
+
     def format(self, record):
         """
         Formats the log record as JSON.

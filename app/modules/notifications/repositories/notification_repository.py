@@ -1,10 +1,14 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.modules.notifications.adapters.models import (NotificationLogModel,
-                                                       NotificationModel)
+from app.modules.notifications.adapters.models import (
+    NotificationLogModel,
+    NotificationModel,
+)
 from app.modules.notifications.entities.repositories import (
-    NotificationLogRepository, NotificationRepository)
+    NotificationLogRepository,
+    NotificationRepository,
+)
 
 
 class NotificationRepository(NotificationRepository):
@@ -15,7 +19,7 @@ class NotificationRepository(NotificationRepository):
     async def create(self, user_id: int, title: str, message: str):
 
         notification = NotificationModel(user_id=user_id, title=title, message=message)
-        print(notification,"---third")
+        print(notification, "---third")
         self.db.add(notification)
         await self.db.commit()
 

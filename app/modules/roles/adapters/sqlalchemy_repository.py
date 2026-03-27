@@ -2,9 +2,12 @@ from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.modules.roles.adapters.models import (PermissionModel, RoleModel,
-                                               RolePermissionModel,
-                                               UserRoleModel)
+from app.modules.roles.adapters.models import (
+    PermissionModel,
+    RoleModel,
+    RolePermissionModel,
+    UserRoleModel,
+)
 from app.modules.roles.entities.repositories import RoleRepository
 
 
@@ -24,7 +27,7 @@ class SQLAlchemyRoleRepository(RoleRepository):
             .join(UserRoleModel, RolePermissionModel.role_id == UserRoleModel.role_id)
             .where(UserRoleModel.user_id == user_id)
         )
-        
+
         result = await self.db.execute(stmt)
         permissions = result.all()
 
@@ -44,9 +47,11 @@ class SQLAlchemyRoleRepository(RoleRepository):
         return result.scalars().all()
 
     async def update_permissions(self, permission_id: int, name: str):
-        result = await self.db.execute(select(PermissionModel).where(PermissionModel.id == permission_id))
+        result = await self.db.execute(
+            select(PermissionModel).where(PermissionModel.id == permission_id)
+        )
         permission = result.scalar_one_or_none()
-        
+
         if permission:
             permission.name = name
             await self.db.commit()
@@ -54,9 +59,11 @@ class SQLAlchemyRoleRepository(RoleRepository):
         return permission
 
     async def delete_permissions(self, permission_id: int):
-        result = await self.db.execute(select(PermissionModel).where(PermissionModel.id == permission_id))
+        result = await self.db.execute(
+            select(PermissionModel).where(PermissionModel.id == permission_id)
+        )
         permission = result.scalar_one_or_none()
-        
+
         if permission:
             await self.db.delete(permission)
             await self.db.commit()
@@ -75,10 +82,12 @@ class SQLAlchemyRoleRepository(RoleRepository):
         result = await self.db.execute(select(RoleModel))
         return result.scalars().all()
 
-    async def update_role(self, role_id: int, name: str, description: str | None = None):
+    async def update_role(
+        self, role_id: int, name: str, description: str | None = None
+    ):
         result = await self.db.execute(select(RoleModel).where(RoleModel.id == role_id))
         role = result.scalar_one_or_none()
-        
+
         if role:
             role.name = name
             role.description = description
@@ -89,7 +98,7 @@ class SQLAlchemyRoleRepository(RoleRepository):
     async def delete_role(self, role_id: int):
         result = await self.db.execute(select(RoleModel).where(RoleModel.id == role_id))
         role = result.scalar_one_or_none()
-        
+
         if role:
             await self.db.delete(role)
             await self.db.commit()
@@ -98,7 +107,9 @@ class SQLAlchemyRoleRepository(RoleRepository):
     async def assign_permission(self, role_id: int, permission_id: int):
 
         # check permission exists
-        result = await self.db.execute(select(PermissionModel).where(PermissionModel.id == permission_id))
+        result = await self.db.execute(
+            select(PermissionModel).where(PermissionModel.id == permission_id)
+        )
         permission = result.scalar_one_or_none()
 
         if not permission:
@@ -106,8 +117,7 @@ class SQLAlchemyRoleRepository(RoleRepository):
 
         # check if already assigned
         result = await self.db.execute(
-            select(RolePermissionModel)
-            .where(
+            select(RolePermissionModel).where(
                 RolePermissionModel.role_id == role_id,
                 RolePermissionModel.permission_id == permission_id,
             )
@@ -130,15 +140,16 @@ class SQLAlchemyRoleRepository(RoleRepository):
 
     async def unassign_permission(self, role_id: int, permission_id: int):
 
-        result = await self.db.execute(select(PermissionModel).where(PermissionModel.id == permission_id))
+        result = await self.db.execute(
+            select(PermissionModel).where(PermissionModel.id == permission_id)
+        )
         permission = result.scalar_one_or_none()
 
         if not permission:
             raise HTTPException(status_code=404, detail="Permission not found")
 
         result = await self.db.execute(
-            select(RolePermissionModel)
-            .where(
+            select(RolePermissionModel).where(
                 RolePermissionModel.role_id == role_id,
                 RolePermissionModel.permission_id == permission_id,
             )
@@ -165,8 +176,7 @@ class SQLAlchemyRoleRepository(RoleRepository):
             raise HTTPException(status_code=404, detail="Role not found")
 
         result = await self.db.execute(
-            select(UserRoleModel)
-            .where(
+            select(UserRoleModel).where(
                 UserRoleModel.user_id == user_id,
                 UserRoleModel.role_id == role_id,
             )
@@ -194,8 +204,7 @@ class SQLAlchemyRoleRepository(RoleRepository):
             raise HTTPException(status_code=404, detail="Role not found")
 
         result = await self.db.execute(
-            select(UserRoleModel)
-            .where(
+            select(UserRoleModel).where(
                 UserRoleModel.user_id == user_id,
                 UserRoleModel.role_id == role_id,
             )

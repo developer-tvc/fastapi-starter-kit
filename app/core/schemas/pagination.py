@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 T = TypeVar("T")
 
+
 class PaginatedResponse(BaseModel, Generic[T]):
     success: bool
     message: str
@@ -11,6 +12,3 @@ class PaginatedResponse(BaseModel, Generic[T]):
     next: Optional[str]
     previous: Optional[str]
     data: List[T]
-    
-
-    

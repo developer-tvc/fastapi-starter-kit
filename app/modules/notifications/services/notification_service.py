@@ -10,7 +10,7 @@ class NotificationService:
         self.repo = repo
 
     async def send_email_notification(self, email, subject, message, background_tasks):
-        
+
         background_tasks.add_task(send_email, email, subject, message)
 
     async def send_sms_notification(self, phone, message):

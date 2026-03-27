@@ -4,8 +4,7 @@ from sqlalchemy import event
 from sqlalchemy.inspection import inspect
 
 from app.modules.activity_logs.adapters.models import ActivityLogModel
-from app.modules.activity_logs.constants import (LOG_DESCRIPTION,
-                                                 USER_TRACK_FIELD)
+from app.modules.activity_logs.constants import LOG_DESCRIPTION, USER_TRACK_FIELD
 from app.modules.activity_logs.request_context import current_ip
 from app.modules.activity_logs.serializer import serialize_model
 

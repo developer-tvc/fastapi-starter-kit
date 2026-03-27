@@ -1,6 +1,7 @@
 """
 APIResponse is a generic response class that can be used to return data from the API.
 """
+
 from typing import Generic, Optional, TypeVar
 
 from pydantic import BaseModel
@@ -12,6 +13,7 @@ class APIResponse(BaseModel, Generic[T]):
     """
     APIResponse is a generic response class that can be used to return data from the API.
     """
+
     success: bool
     message: str
     data: Optional[T] = None
@@ -32,8 +34,8 @@ class APIResponse(BaseModel, Generic[T]):
 
     @staticmethod
     def validation_error_response(message: str, errors: list = None):
-        return {   # must return dict
+        return {  # must return dict
             "success": False,
             "message": message,
-            "errors": errors or []
+            "errors": errors or [],
         }

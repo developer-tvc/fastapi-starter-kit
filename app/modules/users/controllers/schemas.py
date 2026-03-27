@@ -13,6 +13,7 @@ class UserBase(BaseModel):
             return v.strip()
         return v
 
+
 class UserCreate(BaseModel):
     email: EmailStr
     password: str = Field(..., min_length=8, max_length=128)
@@ -33,11 +34,11 @@ class UserCreate(BaseModel):
     def normalize_full_name(cls, v):
         return v.strip()
 
+
 class UserResponse(UserBase):
     id: int
 
     model_config = {"from_attributes": True}
-
 
 
 class UserUpdate(BaseModel):
@@ -51,7 +52,6 @@ class UserUpdate(BaseModel):
         return v
 
     model_config = {"from_attributes": True}
-
 
 
 class UserProfileUpdate(BaseModel):
