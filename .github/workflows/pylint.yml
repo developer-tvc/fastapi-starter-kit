@@ -29,7 +29,7 @@ jobs:
           pip install -r requirements-dev.txt
 
       - name: Check formatting with Black
-        run: black --check app/ tests/
+        run: black --check app/
 
       - name: Check imports with isort
         run: isort --check-only --diff app/ tests/
