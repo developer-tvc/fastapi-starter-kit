@@ -27,5 +27,7 @@ class UserModel(Base):
     locked_until = Column(DateTime, nullable=True)
     last_failed_login_at = Column(DateTime, nullable=True)
     ip_address = Column(String, nullable=True)
-    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now()) 
+    created_at = Column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())

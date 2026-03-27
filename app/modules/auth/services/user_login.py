@@ -3,8 +3,7 @@ from datetime import datetime, timedelta
 from fastapi import HTTPException, Request
 
 from app.core.config import settings
-from app.core.security import (create_access_token, create_refresh_token,
-                               verify_password)
+from app.core.security import create_access_token, create_refresh_token, verify_password
 from app.modules.activity_logs.request_context import current_ip
 from app.modules.users.entities.repositories import UserRepository
 
@@ -46,7 +45,9 @@ class LoginUserService:
                 user.locked_until = None
 
                 await self.user_repository.update_failed_login(user.id, False, None)
-                await self.user_repository.update_failed_login_attempts(user.id, 0, True)
+                await self.user_repository.update_failed_login_attempts(
+                    user.id, 0, True
+                )
 
         if not verify_password(password, user.password_hash):
             if settings.LOGIN_LOCK_ENABLED:

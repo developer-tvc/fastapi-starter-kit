@@ -2,8 +2,7 @@ from app.core.config import get_settings
 from app.core.exceptions import EmailAlreadyExists
 from app.core.security import create_email_verification_token, hash_password
 from app.core.services.email_templates import email_verification_template
-from app.modules.notifications.services.notification_service import \
-    NotificationService
+from app.modules.notifications.services.notification_service import NotificationService
 from app.modules.users.entities.entities import User
 
 settings = get_settings()
@@ -33,15 +32,17 @@ class CreateUser:
         is_verified = not settings.EMAIL_VERIFICATION_ENABLED
 
         # Create user (async)
-        user = await self.repo.create_user(email, password_hash, full_name, roles, is_verified)
-        
+        user = await self.repo.create_user(
+            email, password_hash, full_name, roles, is_verified
+        )
+
         # Notifications
         token = create_email_verification_token(user.id)
         verify_link = f"{settings.EMAIL_VERIFICATION_LINK}?token={token}"
         body = email_verification_template(
             verify_link, full_name, settings.ACCESS_TOKEN_EXPIRE_MINUTES
         )
-        
+
         await self.notification_service.send_email_notification(
             email, "Verify your email", body, background_tasks
         )

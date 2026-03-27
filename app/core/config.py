@@ -1,6 +1,7 @@
 """
 Settings are loaded from the .env file and from environment variables.
 """
+
 from functools import lru_cache
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -10,6 +11,7 @@ class Settings(BaseSettings):
     """
     Application settings.
     """
+
     APP_NAME: str
     DESCRIPTION: str
     DEBUG: bool

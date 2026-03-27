@@ -15,7 +15,7 @@ class UserRepository(ABC):
     """
 
     @abstractmethod
-    async def list_users(self,skip:int = 0,limit:int = 10) -> List[User]:
+    async def list_users(self, skip: int = 0, limit: int = 10) -> List[User]:
         pass
 
     """ method to create a new user
@@ -23,7 +23,14 @@ class UserRepository(ABC):
     """
 
     @abstractmethod
-    async def create_user(self, email: str, password: str, full_name: str, roles: list[int] = [], is_verified: bool = False) -> User:
+    async def create_user(
+        self,
+        email: str,
+        password: str,
+        full_name: str,
+        roles: list[int] = [],
+        is_verified: bool = False,
+    ) -> User:
         pass
 
     """ method to get user by email

@@ -33,7 +33,9 @@ class RoleRepository(ABC):
         pass
 
     @abstractmethod
-    async def update_role(self, role_id: int, name: str, description: str | None = None):
+    async def update_role(
+        self, role_id: int, name: str, description: str | None = None
+    ):
         pass
 
     @abstractmethod

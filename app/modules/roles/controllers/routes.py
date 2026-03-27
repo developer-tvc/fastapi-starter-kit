@@ -6,8 +6,7 @@ from app.core.dependencies import get_db
 from app.core.schemas.response import APIResponse
 from app.core.security import require_permission
 from app.modules.roles import constants
-from app.modules.roles.adapters.sqlalchemy_repository import \
-    SQLAlchemyRoleRepository
+from app.modules.roles.adapters.sqlalchemy_repository import SQLAlchemyRoleRepository
 from app.modules.roles.controllers import schemas
 from app.modules.roles.services.assign_permission import AssignPermission
 from app.modules.roles.services.assign_role import AssignRole
@@ -108,7 +107,7 @@ async def create_role(
 
 @router.get("/roles", response_model=APIResponse[list[schemas.RoleResponse]])
 async def list_roles(
-    db: AsyncSession = Depends(get_db),  
+    db: AsyncSession = Depends(get_db),
     current_user=Depends(require_permission(constants.ROLE_VIEW)),
 ):
     repo = SQLAlchemyRoleRepository(db)

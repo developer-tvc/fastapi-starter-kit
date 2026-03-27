@@ -11,7 +11,9 @@ class DeviceRepository(DeviceRegisterRepository):
         self.db = db
 
     async def get_by_device_id(self, device_id):
-        result = await self.db.execute(select(UserDevice).filter(UserDevice.device_id == device_id))
+        result = await self.db.execute(
+            select(UserDevice).filter(UserDevice.device_id == device_id)
+        )
         return result.scalar_one_or_none()
 
     async def create(

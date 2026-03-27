@@ -15,5 +15,7 @@ class BlacklistRepository:
         await self.db.commit()
 
     async def exists(self, jti: str):
-        result = await self.db.execute(select(BlacklistedToken).filter(BlacklistedToken.jti == jti))
+        result = await self.db.execute(
+            select(BlacklistedToken).filter(BlacklistedToken.jti == jti)
+        )
         return result.scalar_one_or_none() is not None
