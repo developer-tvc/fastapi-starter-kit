@@ -1,6 +1,8 @@
+import pytest
+
 from app.modules.users.services.list_users import ListUsers
 from tests.users.fake_repository import FakeUserRepository
-import pytest
+
 
 @pytest.mark.asyncio
 async def test_list_users():
